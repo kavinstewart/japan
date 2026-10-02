@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tokyo Crew 2026</title>
+<meta name="description" content="Our family Japan trip, Oct 17–27 2026: the plan, Zauo, a 15-minute walking map around Asakusa, the Pokémon Center mission and more — narrated by Mochi the lucky cat.">
+<meta name="theme-color" content="#16173A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='36' r='24' fill='%23fff' stroke='%2316173A' stroke-width='4'/%3E%3Cpath d='M12 26 16 6 30 16M52 26 48 6 34 16' fill='%23fff' stroke='%2316173A' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='24' cy='36' r='3' fill='%2316173A'/%3E%3Ccircle cx='40' cy='36' r='3' fill='%2316173A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:#16173A;          /* indigo ink — text + outlines + hard shadows */
+  --paper:#FAF7F1;        /* dominant surface */
+  --surface:#FFFFFF;
+  --muted:#55577A;
+  --line:#16173A;
+  --accent:#D3382B;       /* Kaminarimon lantern red */
+  --accent-ink:#FFFFFF;
+  --night:#16173A;        /* hero surface */
+  --night-2:#22245A;
+  --sea:#0B3550;          /* Zauo surface */
+  --sea-2:#11496B;
+  --catch:#FFC93C;        /* Zauo accent */
+  --sun:#FFD84D;          /* Pokémon surface */
+  --leaf:#2F7D5B;
+  --pink:#F4A3B5;
+
+  --r-card:14px; --r-ctl:10px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px; --s8:64px; --s9:96px;
+  --shadow:4px 4px 0 var(--ink);
+  --shadow-sm:3px 3px 0 var(--ink);
+  --display:"Dela Gothic One", "Zen Maru Gothic", system-ui, sans-serif;
+  --body:"Zen Maru Gothic", "Hiragino Maru Gothic ProN", system-ui, sans-serif;
+  --t-cap:.875rem; --t-body:1.0625rem; --t-h4:1.25rem; --t-h3:1.5625rem; --t-h2:clamp(2rem,5vw,3.05rem); --t-h1:clamp(2.6rem,6.4vw,5rem);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:var(--t-body);line-height:1.6;font-weight:500;overflow-x:hidden}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration-thickness:2px;text-underline-offset:3px}
+a:hover{color:var(--accent)}
+h1,h2,h3,h4{font-family:var(--display);font-weight:400;line-height:1.08;margin:0;letter-spacing:.005em}
+h3{font-size:var(--t-h3)} h4{font-size:var(--t-h4)}
+p{margin:0 0 var(--s3)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 var(--s4)}
+@media (min-width:720px){.wrap{padding:0 var(--s6)}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+.jp{font-family:var(--body);font-weight:700;opacity:.75;font-size:.9em}
+
+/* buttons: chunky, ink-outlined, hard shadow. Not pills. */
+.btn{font:inherit;font-weight:700;display:inline-flex;align-items:center;gap:var(--s2);min-height:44px;padding:10px 18px;border:2.5px solid var(--ink);border-radius:var(--r-ctl);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);cursor:pointer;text-decoration:none;transition:transform .12s var(--ease-out),box-shadow .12s var(--ease-out)}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink);color:var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{color:var(--accent-ink)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.small{min-height:44px;padding:6px 12px;font-size:var(--t-cap)}
+
+/* ============ NAV ============ */
+.nav{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:2.5px solid var(--ink)}
+.nav .wrap{display:flex;align-items:center;gap:var(--s4);height:56px}
+.brand{font-family:var(--display);font-size:1.15rem;text-decoration:none;white-space:nowrap}
+.brand span{color:var(--accent)}
+.nav ul{list-style:none;margin:0;padding:0;display:flex;gap:var(--s1);overflow-x:auto;scrollbar-width:none;flex:1;justify-content:flex-end}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a.nl{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:var(--r-ctl);text-decoration:none;font-weight:700;white-space:nowrap;font-size:.95rem}
+.nav a.nl:hover,.nav a.nl[aria-current="true"]{background:var(--ink);color:var(--paper)}
+@media (max-width:719px){.brand{display:none}.nav ul{justify-content:flex-start}}
+
+/* ============ HERO ============ */
+.hero{background:var(--night);color:#fff;position:relative;overflow:hidden;padding:var(--s7) 0 var(--s8)}
+.hero .wrap{display:grid;grid-template-columns:1fr;gap:var(--s5);align-items:center;position:relative;z-index:2}
+@media (min-width:900px){.hero .wrap{grid-template-columns:1.2fr .8fr;min-height:min(78vh,720px)}}
+.hero h1{font-size:var(--t-h1);line-height:.98}
+.hero h1 em{font-style:normal;color:var(--catch)}
+.hero .kicker{font-family:var(--body);font-weight:900;font-size:1.35rem;color:var(--pink);margin-bottom:var(--s3);display:block}
+.hero .lede{font-size:1.2rem;max-width:34ch;margin:var(--s4) 0 var(--s5);color:#E7E7F5}
+.facts{display:flex;flex-wrap:wrap;gap:var(--s2);margin:0;padding:0;list-style:none}
+.facts li{border:2px solid rgba(255,255,255,.85);border-radius:var(--r-ctl);padding:6px 12px;font-weight:700;font-size:.95rem}
+.facts li b{color:var(--catch);font-weight:900}
+.stage-col{position:relative;display:flex;flex-direction:column;align-items:center}
+#mochi-anchor{width:min(78vw,400px);aspect-ratio:1;position:relative}
+@media (max-width:899px){#mochi-anchor{width:min(62vw,240px)}.stage-col{order:-1}.hero{padding-top:var(--s6)}.hero .bubble{font-size:1rem;min-height:5.8em}}
+.bubble{position:relative;background:#fff;color:var(--ink);border:2.5px solid var(--ink);border-radius:18px;padding:var(--s4) var(--s5);box-shadow:var(--shadow);font-weight:700;font-size:1.1rem;line-height:1.45}
+.hero .bubble{width:min(100%,440px);min-height:6.5em;margin-top:-6px}
+.hero .bubble::before{content:"";position:absolute;top:-16px;left:50%;margin-left:-14px;border:14px solid transparent;border-bottom-color:var(--ink);border-top:0}
+.hero .bubble::after{content:"";position:absolute;top:-11px;left:50%;margin-left:-11px;border:11px solid transparent;border-bottom-color:#fff;border-top:0}
+.bubble .who{display:block;font-family:var(--display);font-size:.85rem;color:var(--accent);margin-bottom:2px}
+.bubble-ctl{display:flex;gap:var(--s2);margin-top:var(--s3);justify-content:center}
+.lanterns{position:absolute;inset:0 0 auto 0;width:100%;height:110px;z-index:1;pointer-events:none;opacity:.95}
+.waves{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:44px;z-index:1}
+
+/* ============ MOCHI STAGE (fixed, flies hero -> dock) ============ */
+#mochi-stage{position:fixed;left:0;top:0;z-index:60;transform-origin:0 0;will-change:transform;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#mochi-stage canvas,#mochi-stage svg{width:100%;height:100%;display:block}
+#mochi-stage .fallback{display:none}
+#mochi-stage.no3d canvas{display:none}
+#mochi-stage.no3d .fallback{display:block}
+#mochi-stage:focus-visible{outline:3px solid var(--catch);outline-offset:-6px;border-radius:50%}
+#dock-bubble{position:fixed;bottom:20px;z-index:61;width:min(320px,calc(100vw - 132px));font-size:.98rem;line-height:1.4;padding:var(--s3) var(--s4);opacity:0;transform:translateY(8px) scale(.96);transform-origin:90% 100%;pointer-events:none;transition:opacity .25s var(--ease-out),transform .35s var(--ease-out)}
+#dock-bubble.show{opacity:1;transform:none;pointer-events:auto}
+#dock-bubble::after{content:"";position:absolute;bottom:22px;right:-13px;width:20px;height:20px;background:#fff;border-right:2.5px solid var(--ink);border-top:2.5px solid var(--ink);transform:rotate(45deg);border-top-right-radius:4px}
+@media (max-width:719px){#dock-bubble{font-size:.9rem;padding:var(--s2) var(--s3)}#dock-bubble .who{font-size:.75rem}}
+#dock-bubble .x{position:absolute;top:2px;right:2px;width:44px;height:44px;border:0;background:none;font:inherit;font-size:1.3rem;cursor:pointer;color:var(--muted);border-radius:var(--r-ctl)}
+#dock-bubble .txt{display:block;padding-right:28px}
+@media (prefers-reduced-motion:reduce){#dock-bubble{transition:none}}
+
+/* ============ SECTIONS ============ */
+section{scroll-margin-top:64px}
+.sec{padding:var(--s8) 0}
+@media (min-width:720px){.sec{padding:var(--s9) 0}}
+.sec-head{display:grid;gap:var(--s3);margin-bottom:var(--s6);max-width:760px}
+.sec-head h2{font-size:var(--t-h2)}
+.sec-head .tag{font-family:var(--display);font-size:1.05rem;color:var(--accent)}
+.sec-head p{font-size:1.15rem;color:var(--muted);margin:0}
+
+/* ---- PLAN ---- */
+.plan-grid{display:grid;gap:var(--s6)}
+@media (min-width:960px){.plan-grid{grid-template-columns:minmax(0,1fr) 380px;align-items:start}}
+.line{list-style:none;margin:0;padding:0;position:relative}
+.line::before{content:"";position:absolute;left:21px;top:20px;bottom:20px;width:8px;background:var(--accent);border-radius:4px}
+.stop{position:relative;padding-left:64px;margin-bottom:var(--s2)}
+.stop .dot{position:absolute;left:8px;top:14px;width:34px;height:34px;border-radius:50%;background:#fff;border:5px solid var(--ink);z-index:1}
+.stop.travel .dot{background:var(--ink)}
+.stop.big .dot{background:var(--catch)}
+.stop.open .dot{background:#fff;border-style:dashed;border-color:var(--accent)}
+.stop > button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:auto 1fr auto;gap:var(--s1) var(--s4);align-items:baseline;width:100%;min-height:60px;padding:var(--s3) var(--s4);border-radius:var(--r-card);cursor:pointer}
+.stop > button:hover{background:#fff;box-shadow:inset 0 0 0 2.5px var(--ink)}
+.stop > button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.stop[data-open="true"] > button{background:#fff;box-shadow:inset 0 0 0 2.5px var(--ink)}
+.stop .d{font-family:var(--display);font-size:1.2rem;white-space:nowrap}
+.stop .what{font-weight:700;font-size:1.05rem}
+.stop .where{display:block;font-weight:500;color:var(--muted);font-size:.95rem}
+.stop .chev{font-size:1.2rem;transition:transform .2s;color:var(--muted)}
+.stop[data-open="true"] .chev{transform:rotate(90deg)}
+.stop .more{display:none;margin:var(--s2) 0 var(--s4) var(--s4);padding:var(--s4) var(--s5);background:#fff;border:2.5px solid var(--ink);border-radius:var(--r-card);box-shadow:var(--shadow)}
+.stop[data-open="true"] .more{display:block}
+.more ul{margin:0;padding-left:1.1em}
+.more li{margin-bottom:6px}
+.more .src{font-size:var(--t-cap);color:var(--muted);margin-top:var(--s3)}
+.badge{display:inline-block;font-size:.8rem;font-weight:900;padding:2px 8px;border-radius:6px;border:2px solid var(--ink);margin-left:6px;vertical-align:2px}
+.badge.open{color:var(--accent);border-color:var(--accent)}
+
+.aside-card{background:#fff;border:2.5px solid var(--ink);border-radius:var(--r-card);box-shadow:var(--shadow);padding:var(--s5)}
+.aside-card + .aside-card{margin-top:var(--s5)}
+.count{display:flex;gap:var(--s3);margin:var(--s3) 0 0}
+.count div{flex:1;text-align:center;background:var(--night);color:#fff;border-radius:var(--r-ctl);padding:var(--s3) 0}
+.count b{display:block;font-family:var(--display);font-size:2rem;line-height:1}
+.count span{font-size:.8rem;font-weight:700}
+.todo{list-style:none;margin:var(--s3) 0 0;padding:0}
+.todo li{border-top:2px dashed #d9d6cf}
+.todo label{display:flex;gap:var(--s3);align-items:flex-start;padding:var(--s3) 0;cursor:pointer;min-height:44px}
+.todo input{appearance:none;flex:none;width:24px;height:24px;margin:2px 0 0;border:2.5px solid var(--ink);border-radius:6px;background:#fff;cursor:pointer;display:grid;place-items:center}
+.todo input:checked{background:var(--leaf)}
+.todo input:checked::after{content:"";width:7px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.todo input:checked + span{text-decoration:line-through;color:var(--muted)}
+.todo small{display:block;color:var(--muted);font-size:.85rem}
+.todo a{font-weight:700}
+
+/* ---- ZAUO ---- */
+.zauo{background:var(--sea);color:#EAF4FA;position:relative;overflow:hidden}
+.zauo .sec-head .tag{color:var(--catch)}
+.zauo .sec-head p{color:#B9D6E6}
+.zauo h2 em{font-style:normal;color:var(--catch)}
+.tank{position:relative;height:120px;border-top:3px solid #2C6A8E;border-bottom:3px solid #2C6A8E;background:linear-gradient(#0E4466,#0B3550);margin:0 0 var(--s7);overflow:hidden}
+.tank .fish{position:absolute;left:0;animation:swim linear infinite}
+.tank .fish svg{width:100%;height:auto}
+@keyframes swim{from{transform:translateX(-140px)}to{transform:translateX(calc(100vw + 40px))}}
+.tank .fish.rev{animation-name:swimrev}
+@keyframes swimrev{from{transform:translateX(calc(100vw + 40px)) scaleX(-1)}to{transform:translateX(-140px) scaleX(-1)}}
+.tank .boat{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:220px}
+@media (prefers-reduced-motion:reduce){.tank .fish{animation:none}.tank .fish:nth-child(1){transform:translateX(8vw)}.tank .fish:nth-child(2){transform:translateX(70vw)}.tank .fish:nth-child(3){transform:translateX(40vw)}.tank .fish:nth-child(4){transform:translateX(85vw)}}
+.z-grid{display:grid;gap:var(--s7)}
+@media (min-width:960px){.z-grid{grid-template-columns:1fr 1fr;gap:var(--s8)}}
+.hookline{list-style:none;margin:0;padding:0 0 0 46px;position:relative}
+.hookline::before{content:"";position:absolute;left:14px;top:0;bottom:30px;width:2px;background:#cfe6f2}
+.hookline li{position:relative;margin-bottom:var(--s5)}
+.hookline li::before{content:"";position:absolute;left:-38px;top:8px;width:16px;height:22px;border:3px solid var(--catch);border-top:0;border-right-color:transparent;border-radius:0 0 12px 12px;transform:rotate(-20deg)}
+.hookline h4{color:#fff;margin-bottom:4px}
+.hookline p{color:#CFE4EF;margin:0}
+.drum-box{margin-top:var(--s6);border:2.5px solid var(--catch);border-radius:var(--r-card);padding:var(--s5);display:grid;gap:var(--s3)}
+.drum-box h4{color:var(--catch)}
+.drum-box p{margin:0;color:#CFE4EF}
+.btn.catch{background:var(--catch);color:var(--ink);border-color:var(--ink);box-shadow:4px 4px 0 #04192A;align-self:start;justify-self:start;font-size:1.05rem}
+.btn.catch:hover{color:var(--ink)}
+.menu-fish{list-style:none;margin:0 0 var(--s5);padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s2)}
+.menu-fish li{background:var(--sea-2);border-radius:var(--r-ctl);padding:var(--s3);font-weight:700;color:#fff}
+.menu-fish li small{display:block;font-weight:500;color:#B9D6E6}
+.cooks{display:flex;flex-wrap:wrap;gap:var(--s2);margin:0 0 var(--s5);padding:0;list-style:none}
+.cooks li{border:2px solid #9CC3D8;border-radius:8px;padding:4px 10px;font-weight:700;font-size:.95rem}
+.rule{background:var(--catch);color:var(--ink);border-radius:var(--r-card);padding:var(--s4) var(--s5);font-weight:700;margin-bottom:var(--s6);box-shadow:4px 4px 0 #04192A}
+.rule b{font-family:var(--display);font-weight:400;font-size:1.2rem;display:block}
+.branches{display:grid;gap:var(--s3)}
+.branch{background:#fff;color:var(--ink);border-radius:var(--r-card);padding:var(--s4) var(--s5);border:2.5px solid var(--ink)}
+.branch.pick{box-shadow:6px 6px 0 var(--catch)}
+.branch h4{display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;align-items:baseline}
+.branch h4 small{font-family:var(--body);font-weight:900;font-size:.8rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:6px}
+.branch p{margin:6px 0 0;font-size:.97rem}
+.branch .meta{color:var(--muted);font-size:.9rem}
+.z-sub{font-family:var(--display);font-size:1.25rem;color:#fff;margin:0 0 var(--s3)}
+
+/* ---- MAP ---- */
+.map-layout{display:grid;gap:var(--s5)}
+@media (min-width:1000px){.map-layout{grid-template-columns:minmax(0,1fr) 380px}}
+.map-frame{border:2.5px solid var(--ink);border-radius:var(--r-card);box-shadow:var(--shadow);overflow:hidden;background:#e9e6df;position:relative}
+#map{height:min(68vh,620px);min-height:420px;width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s2);margin-bottom:var(--s4)}
+.chip{font:inherit;font-weight:700;min-height:44px;padding:6px 14px;border-radius:var(--r-ctl);border:2.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.chip .sw{width:12px;height:12px;border-radius:50%;border:2px solid currentColor}
+.routes{display:grid;gap:var(--s2);margin-bottom:var(--s5)}
+@media (min-width:640px){.routes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.route-btn{all:unset;box-sizing:border-box;cursor:pointer;border:2.5px solid var(--ink);border-radius:var(--r-card);padding:var(--s3) var(--s4);background:#fff;min-height:44px;display:grid;gap:2px}
+.route-btn b{font-family:var(--display);font-weight:400;font-size:1.1rem}
+.route-btn span{font-size:.92rem;color:var(--muted)}
+.route-btn[aria-pressed="true"]{background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+.route-btn[aria-pressed="true"] span{color:#FFE3DF}
+.route-btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.route-info{margin-top:var(--s3);font-size:.98rem;min-height:1.6em}
+.route-info a{font-weight:700}
+.places{max-height:min(68vh,620px);overflow:auto;border:2.5px solid var(--ink);border-radius:var(--r-card);background:#fff;scrollbar-width:thin}
+.places h3{font-size:1.05rem;position:sticky;top:0;background:var(--paper);padding:var(--s2) var(--s4);border-bottom:2px solid var(--ink);z-index:1;display:flex;align-items:center;gap:var(--s2)}
+.places ul{list-style:none;margin:0;padding:0}
+.places li + li{border-top:1.5px solid #ece9e2}
+.place{all:unset;box-sizing:border-box;display:grid;grid-template-columns:34px 1fr auto;gap:var(--s3);align-items:start;width:100%;padding:var(--s3) var(--s4);cursor:pointer;min-height:44px}
+.place:hover,.place[aria-current="true"]{background:#FFF1D6}
+.place:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.place .ico{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--ink);font-size:15px}
+.place b{display:block;font-size:1rem;line-height:1.3}
+.place .jpn{font-size:.82rem;color:var(--muted);font-weight:700}
+.place p{margin:4px 0 0;font-size:.9rem;line-height:1.45;color:#3a3c5c}
+.place .mins{font-family:var(--display);font-size:.95rem;white-space:nowrap}
+.place .mins small{display:block;font-family:var(--body);font-size:.7rem;font-weight:700;color:var(--muted);text-align:right}
+.legend-note{font-size:var(--t-cap);color:var(--muted);margin-top:var(--s3)}
+/* category colours: used for pins + list icons */
+.c-eat{background:#FFB59E}.c-sweet{background:#FFD3E0}.c-see{background:#BFD4FF}.c-kids{background:#FFE07A}.c-gem{background:#B9E6CC}.c-home{background:var(--accent)}
+.pin{width:32px;height:32px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);border:2.5px solid var(--ink);display:grid;place-items:center;box-shadow:2px 2px 0 var(--ink)}
+.pin i{transform:rotate(45deg);font-style:normal;font-size:15px;line-height:1}
+.pin.c-home{width:44px;height:44px}
+.pin.c-home i{font-size:22px}
+.leaflet-popup-content-wrapper{border:2.5px solid var(--ink);border-radius:var(--r-card);box-shadow:var(--shadow);font-family:var(--body)}
+.leaflet-popup-content{margin:12px 16px;font-size:.95rem;line-height:1.45}
+.leaflet-popup-content b{font-family:var(--display);font-weight:400;font-size:1.05rem}
+.leaflet-popup-tip{border:2.5px solid var(--ink)}
+.leaflet-container{font-family:var(--body)}
+.leaflet-tile-pane{filter:saturate(.8) contrast(.96)}
+.leaflet-container a.pop-link{font-weight:700;color:var(--accent)}
+.ring-label{font-family:var(--display);font-size:13px;color:var(--accent);background:#fff;border:2px solid var(--accent);border-radius:6px;padding:1px 6px;white-space:nowrap}
+
+/* ---- POKÉMON ---- */
+.poke{background:var(--sun);position:relative;overflow:hidden}
+.poke .sec-head .tag{color:var(--ink)}
+.poke .sec-head p{color:#3D3A1F}
+.quest{display:grid;gap:var(--s5);align-items:start}
+@media (min-width:960px){.quest{grid-template-columns:1.1fr .9fr}}
+.target{background:#fff;border:2.5px solid var(--ink);border-radius:var(--r-card);box-shadow:6px 6px 0 var(--ink);padding:var(--s5) var(--s5) var(--s4)}
+.target h3{margin-bottom:var(--s2)}
+.target .addr{font-weight:700;color:var(--muted);margin-bottom:var(--s4)}
+.ways{display:grid;gap:var(--s3);margin:0 0 var(--s4);padding:0;list-style:none}
+@media (min-width:640px){.ways{grid-template-columns:repeat(3,1fr)}}
+.ways li{border:2.5px solid var(--ink);border-radius:var(--r-ctl);padding:var(--s3)}
+.ways li b{font-family:var(--display);font-weight:400;font-size:1.6rem;display:block;line-height:1}
+.ways li span{font-size:.92rem;display:block;margin-top:6px}
+.ways li.best{background:var(--ink);color:#fff}
+.steps{margin:0 0 var(--s4);padding-left:1.3em}
+.steps li{margin-bottom:6px}
+.levelup{display:grid;gap:var(--s3)}
+.lv{background:rgba(255,255,255,.65);border:2.5px solid var(--ink);border-radius:var(--r-card);padding:var(--s3) var(--s4)}
+.lv h4{font-size:1.1rem;display:flex;gap:var(--s2);align-items:baseline;flex-wrap:wrap}
+.lv h4 small{font-family:var(--body);font-size:.75rem;font-weight:900;border:2px solid var(--ink);border-radius:6px;padding:0 6px}
+.lv h4 small.hot{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lv p{margin:4px 0 0;font-size:.95rem}
+.bolt{position:absolute;right:-30px;top:30px;width:220px;opacity:.18;pointer-events:none}
+
+/* ---- EXTRAS (sticker board) ---- */
+.board{display:grid;gap:var(--s4);grid-template-columns:repeat(auto-fill,minmax(260px,1fr));grid-auto-flow:dense}
+.sticker{background:#fff;border:2.5px solid var(--ink);border-radius:var(--r-card);padding:var(--s4) var(--s5);box-shadow:var(--shadow);position:relative}
+.sticker.wide{grid-column:span 2}
+@media (max-width:620px){.sticker.wide{grid-column:auto}}
+.sticker.tall{grid-row:span 2}
+.sticker .em{font-size:2rem;line-height:1;display:block;margin-bottom:var(--s2)}
+.sticker h3{font-size:1.3rem;margin-bottom:var(--s2)}
+.sticker p{font-size:.97rem;margin-bottom:var(--s2)}
+.sticker .meta{font-size:.85rem;color:var(--muted);font-weight:700}
+.sticker.red{background:var(--accent);color:#fff}
+.sticker.red .meta{color:#FFE3DF}
+.sticker.red a{color:#fff}
+.sticker.ink{background:var(--ink);color:#fff}
+.sticker.ink .meta{color:#C9CAE8}
+.sticker.green{background:#DDF1E5}
+.sticker:nth-child(3n){transform:rotate(-.6deg)}
+.sticker:nth-child(4n){transform:rotate(.5deg)}
+
+/* ---- KNOW-HOW ---- */
+.know{display:grid;gap:var(--s5)}
+@media (min-width:900px){.know{grid-template-columns:1fr 1fr}}
+.panel{border:2.5px solid var(--ink);border-radius:var(--r-card);padding:var(--s5);background:#fff}
+.panel h3{margin-bottom:var(--s3)}
+.panel ul{margin:0;padding-left:1.1em}
+.panel li{margin-bottom:8px}
+.phrases{display:grid;gap:var(--s2);grid-template-columns:repeat(auto-fill,minmax(220px,1fr));margin-top:var(--s3)}
+.phrase{all:unset;box-sizing:border-box;cursor:pointer;border:2.5px solid var(--ink);border-radius:var(--r-ctl);padding:var(--s3);min-height:44px;background:var(--paper);display:grid;gap:2px}
+.phrase:hover{background:#FFF1D6}
+.phrase:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.phrase .ro{font-family:var(--display);font-size:1.05rem}
+.phrase .ja{font-weight:700;font-size:.95rem}
+.phrase .en{font-size:.85rem;color:var(--muted);font-weight:700}
+.phrase.playing{background:var(--catch)}
+.panel.full{grid-column:1/-1}
+.jet{display:grid;gap:var(--s3);grid-template-columns:repeat(auto-fit,minmax(180px,1fr));list-style:none;padding:0!important;margin:0}
+.jet li{border-left:6px solid var(--accent);padding:var(--s1) 0 var(--s1) var(--s3);margin:0!important}
+.jet b{display:block;font-family:var(--display);font-weight:400}
+
+footer{background:var(--night);color:#C9CAE8;padding:var(--s7) 0 calc(var(--s8) + 80px);font-size:.95rem}
+footer b{color:#fff}
+footer a{color:#fff}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js"}}</script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Sections">
+  <div class="wrap">
+    <a class="brand" href="#top">Tokyo <span>Crew</span> ’26</a>
+    <ul>
+      <li><a class="nl" href="#plan">The plan</a></li>
+      <li><a class="nl" href="#zauo">Zauo</a></li>
+      <li><a class="nl" href="#walk">Walk map</a></li>
+      <li><a class="nl" href="#pokemon">Pokémon</a></li>
+      <li><a class="nl" href="#extras">Surprises</a></li>
+      <li><a class="nl" href="#knowhow">Know-how</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <svg class="lanterns" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    <path d="M0 6 Q300 40 600 10 T1200 8" fill="none" stroke="#3A3D7A" stroke-width="2"/>
+    <g id="lt"><line x1="0" y1="0" x2="0" y2="14" stroke="#3A3D7A" stroke-width="2"/><rect x="-8" y="14" width="16" height="5" rx="1" fill="#0d0e26"/><ellipse cx="0" cy="40" rx="17" ry="22" fill="#D3382B"/><path d="M-16 32h32M-17 40h34M-16 48h32" stroke="#a52a20" stroke-width="1.5"/><rect x="-8" y="60" width="16" height="5" rx="1" fill="#0d0e26"/></g>
+    <use href="#lt" x="560" y="22"/><use href="#lt" x="760" y="14"/><use href="#lt" x="960" y="10"/><use href="#lt" x="1150" y="8"/>
+  </svg>
+  <div class="wrap">
+    <div>
+      <span class="kicker" lang="ja">東京へ行こう！</span>
+      <h1>Ten days.<br>One lucky cat.<br><em>Way too many snacks.</em></h1>
+      <p class="lede">Our Japan trip, Oct 17–27, 2026. Base camp is Asakusa, old Tokyo, right next to the big red lantern. Mochi will show you around.</p>
+      <ul class="facts">
+        <li>✈ <b>ZIPAIR ZG025</b> · SFO Sat 4:45pm</li>
+        <li>🏮 Mimaru Suites Asakusa</li>
+        <li>🕘 Japan is <b>+16 hrs</b></li>
+      </ul>
+    </div>
+    <div class="stage-col">
+      <div id="mochi-anchor" aria-hidden="true"></div>
+      <div class="bubble" id="hero-bubble">
+        <span class="who">Mochi says</span>
+        <span class="txt" aria-hidden="true"></span>
+        <span class="sr-only" aria-live="polite" id="hero-sr"></span>
+        <div class="bubble-ctl">
+          <button class="btn small" id="prev-tip" type="button" aria-label="Previous thing Mochi said">Back</button>
+          <button class="btn small primary" id="next-tip" type="button">Tell me more</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <svg class="waves" viewBox="0 0 1200 44" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22 Q50 0 100 22 T200 22 T300 22 T400 22 T500 22 T600 22 T700 22 T800 22 T900 22 T1000 22 T1100 22 T1200 22 V44 H0Z" fill="#FAF7F1"/></svg>
+</header>
+
+<!-- The mascot. One fixed stage that flies from the hero into the corner dock. -->
+<div id="mochi-stage" role="button" tabindex="0" aria-label="Mochi the lucky cat. Press for another tip.">
+  <canvas id="mochi-canvas"></canvas>
+  <svg class="fallback" viewBox="0 0 200 200" aria-hidden="true"><g stroke="#16173A" stroke-width="6" stroke-linejoin="round"><path d="M40 80 52 28 88 56M160 80 148 28 112 56" fill="#fff"/><ellipse cx="100" cy="150" rx="66" ry="44" fill="#fff"/><ellipse cx="100" cy="92" rx="72" ry="58" fill="#fff"/><path d="M60 128h80" stroke="#D3382B" stroke-width="12"/></g><circle cx="75" cy="92" r="7" fill="#16173A"/><circle cx="125" cy="92" r="7" fill="#16173A"/><ellipse cx="60" cy="110" rx="10" ry="6" fill="#F4A3B5"/><ellipse cx="140" cy="110" rx="10" ry="6" fill="#F4A3B5"/><path d="M90 108q5 7 10 0 5 7 10 0" fill="none" stroke="#16173A" stroke-width="4"/></svg>
+</div>
+<div class="bubble" id="dock-bubble" aria-hidden="true">
+  <span class="who">Mochi</span>
+  <span class="txt"></span>
+  <button class="x" type="button" aria-label="Hide Mochi's speech bubble" tabindex="-1">×</button>
+</div>
+
+<main>
+<!-- ================= PLAN ================= -->
+<section class="sec" id="plan" data-mochi="plan">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">The plan</span>
+      <h2>Here's the trip as a train line</h2>
+      <p>Tap any stop to open the details. The open days are dashed, and the "Surprises" section has ideas to fill them.</p>
+    </div>
+    <div class="plan-grid">
+      <ol class="line" id="line"></ol>
+      <aside>
+        <div class="aside-card">
+          <h3 id="count-title">Wheels up in…</h3>
+          <div class="count" id="count" aria-live="off">
+            <div><b id="cd-d">–</b><span>days</span></div>
+            <div><b id="cd-h">–</b><span>hours</span></div>
+            <div><b id="cd-m">–</b><span>mins</span></div>
+          </div>
+        </div>
+        <div class="aside-card">
+          <h3>Book before we fly</h3>
+          <p style="color:var(--muted);font-size:.95rem;margin:6px 0 0">Ticks only save on your own device.</p>
+          <ul class="todo" id="todo">
+            <li><label><input type="checkbox" data-k="teamlab"><span>teamLab Planets tickets for Tue 10/20 <small>Entry is timed and prices change by slot. <a href="https://teamlabplanets.dmm.com/en" target="_blank" rel="noopener">Official tickets</a></small></span></label></li>
+            <li><label><input type="checkbox" data-k="kidzania"><span>KidZania Tokyo session for Wed 10/21 <small>Ask about English activities. <a href="https://www.kidzania.jp/tokyo/en/" target="_blank" rel="noopener">kidzania.jp</a></small></span></label></li>
+            <li><label><input type="checkbox" data-k="zauo"><span>Zauo table for 9 <small>Kameido books through Gurunavi; Shinjuku and Meguro through TableCheck. <a href="https://www.zauo.com/shops/" target="_blank" rel="noopener">All branches</a></small></span></label></li>
+            <li><label><input type="checkbox" data-k="pokepark"><span>PokéPark KANTO tickets? <small>There are no tickets at the gate or on the day. <a href="https://ticket-en.pokepark-kanto.co.jp/" target="_blank" rel="noopener">English ticket site</a></small></span></label></li>
+            <li><label><input type="checkbox" data-k="cafe"><span>Pokémon Café: try for cancellations <small>Booking opens 31 days ahead at 6pm Japan time, so it's down to cancellations now. <a href="https://reserve.pokemon-cafe.jp/" target="_blank" rel="noopener">reserve.pokemon-cafe.jp</a></small></span></label></li>
+            <li><label><input type="checkbox" data-k="shinkansen"><span>Shinkansen seats for Sat 10/24 <small>Ueno to Echigo-Yuzawa on the Joetsu Shinkansen, about 70 min.</small></span></label></li>
+            <li><label><input type="checkbox" data-k="suica"><span>Add Suica to Apple Wallet <small>Wallet, then +, then Transit Card, then Suica. Do it before you fly.</small></span></label></li>
+            <li><label><input type="checkbox" data-k="arrival"><span>Plan the 8pm Narita arrival <small>Nine people plus bags at night. Take the train (below) or pre-book a van.</small></span></label></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ZAUO ================= -->
+<section class="zauo" id="zauo" data-mochi="zauo">
+  <div class="sec" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="tag"><span lang="ja" style="font-family:var(--body);font-weight:900">釣船茶屋ざうお</span> · Zauo</span>
+        <h2>You catch it.<br>They cook it.<br><em>Everybody screams.</em></h2>
+        <p>Dinner is sitting on a giant wooden boat over a fish tank, holding a fishing rod. Whatever you hook goes straight to the kitchen and comes back as sashimi, tempura or grilled with salt, cooked how you like.</p>
+      </div>
+    </div>
+  </div>
+  <div class="tank" aria-hidden="true">
+    <svg class="boat" viewBox="0 0 220 40"><path d="M6 6h208l-22 26H28Z" fill="#8A5A34" stroke="#16173A" stroke-width="3" stroke-linejoin="round"/><path d="M40 6V0M110 6V0M180 6V0" stroke="#16173A" stroke-width="3"/><path d="M150 6 172 -2" stroke="#16173A" stroke-width="2"/><path d="M172 -2V70" stroke="#cfe6f2" stroke-width="1"/></svg>
+    <div class="fish" style="top:46px;width:90px;animation-duration:19s"><svg viewBox="0 0 90 40"><path d="M10 20 Q35 0 62 12 L86 2 L80 20 L86 38 L62 28 Q35 40 10 20Z" fill="#F07A5A" stroke="#16173A" stroke-width="2.5"/><circle cx="22" cy="18" r="3" fill="#16173A"/></svg></div>
+    <div class="fish rev" style="top:74px;width:64px;animation-duration:14s;animation-delay:-6s"><svg viewBox="0 0 90 40"><path d="M10 20 Q35 0 62 12 L86 2 L80 20 L86 38 L62 28 Q35 40 10 20Z" fill="#C8D9E6" stroke="#16173A" stroke-width="2.5"/><circle cx="22" cy="18" r="3" fill="#16173A"/></svg></div>
+    <div class="fish" style="top:84px;width:52px;animation-duration:11s;animation-delay:-3s"><svg viewBox="0 0 90 40"><path d="M10 20 Q35 0 62 12 L86 2 L80 20 L86 38 L62 28 Q35 40 10 20Z" fill="#FFC93C" stroke="#16173A" stroke-width="2.5"/><circle cx="22" cy="18" r="3" fill="#16173A"/></svg></div>
+    <div class="fish rev" style="top:40px;width:110px;animation-duration:26s;animation-delay:-14s"><svg viewBox="0 0 90 40"><path d="M10 20 Q35 4 62 14 L86 6 L80 20 L86 34 L62 26 Q35 36 10 20Z" fill="#8FA8B8" stroke="#16173A" stroke-width="2.5"/><circle cx="22" cy="18" r="3" fill="#16173A"/></svg></div>
+  </div>
+  <div class="wrap" style="padding-bottom:var(--s9)">
+    <div class="z-grid">
+      <div>
+        <p class="z-sub">How it goes down</p>
+        <ol class="hookline">
+          <li><h4>Grab a rod, pick a target</h4><p>The tank is full of sea bream, flounder, horse mackerel and more. Each fish has a lower "you caught it" price and a higher "just order it" price, so catching is cheaper.</p></li>
+          <li><h4>Hook it</h4><p>Staff help the little ones and scoop with a net.</p></li>
+          <li><h4>The drum</h4><p>When you land one, staff bang a drum and the room cheers. It's real, and it's loud.</p></li>
+          <li><h4>Choose how it's cooked</h4><p>Sashimi, salt-grilled, simmered, tempura or butter-grilled. Leftover bones can come back as soup.</p></li>
+        </ol>
+        <div class="drum-box">
+          <h4>Practice the celebration</h4>
+          <p>For the hype. Sound on.</p>
+          <button class="btn catch" id="drum" type="button">🥁 Beat the drum</button>
+        </div>
+      </div>
+      <div>
+        <div class="rule"><b>The one rule: there's no catch and release.</b>If it's on your hook, it's on your bill. Agree on a fish budget before handing nine people rods.</div>
+        <p class="z-sub">What's swimming</p>
+        <ul class="menu-fish">
+          <li>Sea bream <small>tai, the classic</small></li>
+          <li>Flounder <small>hirame</small></li>
+          <li>Horse mackerel <small>aji, great as tempura</small></li>
+          <li>Spiny lobster <small>for the brave wallet</small></li>
+          <li>Turban shell <small>sazae</small></li>
+          <li>Abalone &amp; shrimp <small>varies by day</small></li>
+        </ul>
+        <p class="z-sub">Cook it how?</p>
+        <ul class="cooks"><li>Sashimi</li><li>Salt-grilled</li><li>Simmered</li><li>Tempura / fried</li><li>Butter-grilled</li></ul>
+        <p class="z-sub">Where to go</p>
+        <div class="branches">
+          <div class="branch pick">
+            <h4>Kameido Station Front <small>Closest</small></h4>
+            <p>2F, 2-36-11 Kameido, Koto-ku. 3 min walk from the JR Kameido north exit.</p>
+            <p class="meta">Weekdays: dinner only, 5–11pm. Weekends: from 11:30am. From Asakusa, about 25 min on the Tobu line via Hikifune, or a short taxi ride. <a href="https://www.zauo.com/shops/kameido/" target="_blank" rel="noopener">Branch page</a></p>
+          </div>
+          <div class="branch">
+            <h4>Shinjuku</h4>
+            <p>1F, Shinjuku Washington Hotel, 3-2-9 Nishi-Shinjuku. Kids' chairs, a kids' menu and English-speaking staff.</p>
+            <p class="meta">Lunch and dinner every day. Book on TableCheck. About 40 min from Asakusa. <a href="https://www.zauo.com/shops/shinjuku/" target="_blank" rel="noopener">Branch page</a></p>
+          </div>
+          <div class="branch">
+            <h4>Meguro</h4>
+            <p>5F, Sun Felista Meguro, 2 min from Meguro Station. Kids' chairs and a kids' menu.</p>
+            <p class="meta">Book on TableCheck. <a href="https://www.zauo.com/shops/meguro/" target="_blank" rel="noopener">Branch page</a></p>
+          </div>
+        </div>
+        <p style="margin-top:var(--s4);color:#B9D6E6;font-size:.92rem">Kids can get the "Kids Zauo Maru" meal on a boat-shaped plate. Budget about ¥4,000 per adult at dinner. Rice and miso soup refills are free. Hours checked Oct 2026, so confirm on the branch page.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WALK MAP ================= -->
+<section class="sec" id="walk" data-mochi="walk">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Within 15 minutes on foot</span>
+      <h2>The neighborhood, mapped</h2>
+      <p>Mimaru Suites is on a quiet street between Senso-ji and the Sumida River. Everything inside the red ring is about a 15-minute walk away. Pick a walk or tap any place.</p>
+    </div>
+    <div class="routes" id="routes" role="group" aria-label="Suggested walks"></div>
+    <div class="chips" id="chips" role="group" aria-label="Filter places"></div>
+    <div class="map-layout">
+      <div>
+        <div class="map-frame"><div id="map" role="region" aria-label="Map of places near the hotel"></div></div>
+        <p class="route-info" id="route-info"></p>
+        <p class="legend-note">Walk times are estimates at kid pace. The route lines are rough, so follow your phone for the turns.</p>
+      </div>
+      <div class="places" id="places"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= POKÉMON ================= -->
+<section class="poke sec" id="pokemon" data-mochi="pokemon">
+  <svg class="bolt" viewBox="0 0 100 160" aria-hidden="true"><path d="M60 0 10 90h34L30 160 90 60H54Z" fill="#16173A"/></svg>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">⚡ Mission: Pokémon Center</span>
+      <h2>The nearest one is a walk across the river</h2>
+      <p>Pokémon Center Skytree Town is inside the Tokyo Solamachi mall at the foot of Tokyo Skytree. You can see it from the hotel.</p>
+    </div>
+    <div class="quest">
+      <div class="target">
+        <h3>Pokémon Center Skytree Town</h3>
+        <p class="addr">Tokyo Solamachi, East Yard 4F · 1-1-2 Oshiage, Sumida · open about 10am–9pm</p>
+        <ul class="ways">
+          <li class="best"><b>~20 min</b><span>Walk it: over the river bridge, along Mizumachi and up to Skytree.</span></li>
+          <li><b>1 stop</b><span>Tobu Skytree Line: Asakusa to Tokyo Skytree Station.</span></li>
+          <li><b>2 stops</b><span>Toei Asakusa Line: Asakusa to Oshiage.</span></li>
+        </ul>
+        <p style="font-weight:700;margin-bottom:6px">The walk, step by step</p>
+        <ol class="steps">
+          <li>From the hotel, head to the river. The Sumida River Walk footbridge runs right beside the train bridge, and parts of the floor are glass.</li>
+          <li>Cross, then follow Tokyo Mizumachi, a row of shops and cafés under the train tracks.</li>
+          <li>Walk toward the giant tower; you can't miss it. Go into Solamachi, take the escalators up to East Yard, 4th floor.</li>
+          <li>Look for the store's mascot, Rayquaza, and the Skytree-only merch.</li>
+        </ol>
+        <div style="display:flex;gap:var(--s2);flex-wrap:wrap">
+          <button class="btn primary" type="button" id="show-poke-route">Show the walk on the map</button>
+          <a class="btn" href="https://www.google.com/maps/dir/?api=1&origin=35.712875,139.799438&destination=35.71024,139.81195&travelmode=walking" target="_blank" rel="noopener">Open in Google Maps</a>
+        </div>
+      </div>
+      <div class="levelup">
+        <h3 style="margin-bottom:var(--s1)">Level up: more Pokémon</h3>
+        <div class="lv"><h4>PokéPark KANTO <small class="hot">big one</small></h4><p>A permanent Pokémon park at Yomiuriland that opened Feb 2026. There's no gate or same-day sales; tickets go on sale online in blocks at 8pm Japan time. About 30–40 min from Shinjuku. <a href="https://ticket-en.pokepark-kanto.co.jp/" target="_blank" rel="noopener">Check tickets now</a></p></div>
+        <div class="lv"><h4>Pokémon Café, Nihonbashi <small>reservation only</small></h4><p>You can't get in without a booking. Slots open 31 days ahead at 6pm Japan time and go in minutes, so keep refreshing for cancellations. The giant Pokémon Center Tokyo DX is next door. <a href="https://reserve.pokemon-cafe.jp/" target="_blank" rel="noopener">Reserve</a></p></div>
+        <div class="lv"><h4>Pokémon Center Shibuya</h4><p>Shibuya PARCO 6F, home of the life-size Mewtwo. Pair it with a Shibuya Crossing stop.</p></div>
+        <div class="lv"><h4>Poké Lids in Ueno Park</h4><p>Pokémon manhole covers near the science museum and the Tokyo National Museum. Ueno is 5 min from Asakusa on the Ginza Line, and it's where the shinkansen to Echigo-Yuzawa leaves from.</p></div>
+        <div class="lv"><h4>Pokémon Center Mega Tokyo, Ikebukuro <small>check first</small></h4><p>Reopened in Aug 2026 with entry restrictions. Check how entry works before you go.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXTRAS ================= -->
+<section class="sec" id="extras" data-mochi="extras">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Mochi's surprise box</span>
+      <h2>Stuff you didn't know you needed</h2>
+      <p>Ideas for the open days. Most are within walking distance, and one is a spaceship.</p>
+    </div>
+    <div class="board">
+      <article class="sticker red wide">
+        <span class="em" aria-hidden="true">🚀</span>
+        <h3>Take the spaceship boat to Odaiba</h3>
+        <p>Tokyo Cruise runs sci-fi water buses from Asakusa pier. <b>Hotaluna</b> goes to Hinode in about 40 min (¥1,400, kids ¥700) and <b>Emeraldas</b> to Odaiba in about 55 min. They're glass bubbles on a river.</p>
+        <p class="meta">Hotaluna skips Oct 20–21 and Emeraldas skips Oct 27. The relaunched Tokyo Mizube Line also runs Asakusa to Odaiba from Oct 17, Wed–Sun. <a href="https://www.suijobus.co.jp/en/" target="_blank" rel="noopener">Tokyo Cruise timetable</a></p>
+      </article>
+      <article class="sticker">
+        <span class="em" aria-hidden="true">🎢</span>
+        <h3>Hanayashiki</h3>
+        <p>Japan's oldest amusement park, 5 min from the hotel, with a roller coaster that's been running since 1953. It's small, retro and perfect for a jet-lagged afternoon.</p>
+        <p class="meta">10am–6pm · entry ¥1,600 · adult ride pass ¥4,600</p>
+      </article>
+      <article class="sticker ink tall">
+        <span class="em" aria-hidden="true">🍤</span>
+        <h3>Make your own fake food</h3>
+        <p>Kappabashi is a whole street of restaurant-supply shops, including the plastic food in Tokyo's restaurant windows. At <b>Ganso Shokuhin Sample-ya</b> the kids make wax tempura and lettuce in about 40 minutes.</p>
+        <p>Booking required. It's taught in Japanese, but it's very show-and-copy. Look for the giant chef's head on the Niimi building.</p>
+        <p class="meta">~13 min walk · roughly ¥3,000+ per person</p>
+      </article>
+      <article class="sticker green">
+        <span class="em" aria-hidden="true">🍵</span>
+        <h3>The matcha level 7 challenge</h3>
+        <p>Suzukien sells matcha gelato in seven strengths. Everyone starts at level 1. Who can take No. 7?</p>
+        <p class="meta">10am–5pm · closed Wed Oct 21 · ~6 min walk</p>
+      </article>
+      <article class="sticker">
+        <span class="em" aria-hidden="true">🐱</span>
+        <h3>Mochi's hometown</h3>
+        <p>Imado Shrine says it's where the maneki-neko, the beckoning lucky cat, was born. It's full of cat statues, and sometimes a real cat too.</p>
+        <p class="meta">~12 min walk up the river</p>
+      </article>
+      <article class="sticker">
+        <span class="em" aria-hidden="true">🐄</span>
+        <h3>Pet the lucky cow</h3>
+        <p>Ushijima Shrine has a stone cow called <i>nade-ushi</i>. Rub the part of the cow where you hurt and it's supposed to heal. Good after a 10-hour flight.</p>
+        <p class="meta">Across the river, on the Pokémon walk</p>
+      </article>
+      <article class="sticker">
+        <span class="em" aria-hidden="true">🌅</span>
+        <h3>Free rooftop view</h3>
+        <p>The Asakusa Culture Tourist Information Center, opposite Kaminarimon, has a free 8th-floor terrace that looks down Nakamise to Senso-ji. Ekimise's rooftop does Skytree plus trains.</p>
+      </article>
+      <article class="sticker wide">
+        <span class="em" aria-hidden="true">🍁</span>
+        <h3>Echigo-Yuzawa: the day-trip game plan (Sat 10/24)</h3>
+        <p><b>Morning:</b> shinkansen from Ueno, about 70 min to snow country. <b>Midday:</b> the Yuzawa Kogen Ropeway; its Autumn Fair runs to Nov 8, and late October is around peak autumn colour. Up top there's a zipline, a summer bobsled and a café. <b>Before the train home:</b> Ponshukan inside the station. Adults get 5 sake tastings from coin machines for ¥500. Everyone can do the sake bath onsen and giant <i>bakudan</i> rice balls.</p>
+        <p class="meta">GALA Yuzawa is closed until ski season. Ropeway runs 8:40am–4:40pm and can stop for weather. <a href="https://www.yuzawakogen.com/en/" target="_blank" rel="noopener">Ropeway info</a></p>
+      </article>
+      <article class="sticker">
+        <span class="em" aria-hidden="true">♨️</span>
+        <h3>Footbath after teamLab</h3>
+        <p>Toyosu Senkyaku Banrai is an Edo-style food hall one stop from teamLab, with a free footbath and a bay view. Wet feet, warm feet.</p>
+      </article>
+      <article class="sticker">
+        <span class="em" aria-hidden="true">🏮</span>
+        <h3>Nakamise after dark</h3>
+        <p>When the shops close in the evening, the shutters come down and show painted scenes of old Asakusa. You'll have the street almost to yourselves.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KNOW-HOW ================= -->
+<section class="sec" id="knowhow" data-mochi="knowhow" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="tag">Know-how</span>
+      <h2>Little things that make it easy</h2>
+    </div>
+    <div class="know">
+      <div class="panel full">
+        <h3>Say it in Japanese</h3>
+        <p style="color:var(--muted);margin:0">Tap a phrase to hear it. It uses your phone's own voice.</p>
+        <div class="phrases" id="phrases"></div>
+      </div>
+      <div class="panel">
+        <h3>Jet lag game plan</h3>
+        <ul class="jet">
+          <li><b>Sat, on the plane</b>Japan is 16 hrs ahead. Sleep on the second half of the flight.</li>
+          <li><b>Sun, ~8pm arrival</b>Narita to the hotel, then straight to bed.</li>
+          <li><b>Mon, the 5am wake-up</b>Use it. Senso-ji at sunrise is empty and magical.</li>
+          <li><b>Mon, afternoon</b>Get outside in daylight. Keep naps short.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Getting from Narita to the hotel</h3>
+        <ul>
+          <li>The <b>Keisei Access Express</b> runs straight to Asakusa Station with no transfers, in about an hour (about ¥1,310). Board trains bound for <b>Haneda Airport or Nishi-Magome</b>; Keisei-Ueno trains don't stop at Asakusa.</li>
+          <li>The hotel is about 3 min from Asakusa Station.</li>
+          <li>With nine people, bags and sleepy kids at 9pm, a pre-booked van is worth pricing.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Money &amp; trains</h3>
+        <ul>
+          <li><b>Suica in Apple Wallet</b> works on every train, at konbini and at vending machines, and you can top it up with a US card.</li>
+          <li>Under-6s ride trains free with an adult. Older kids pay child fares, but a phone Suica charges adult fare.</li>
+          <li>7-Eleven ATMs take foreign cards. Some small shops and shrines are still cash only.</li>
+          <li>No tipping, ever. It can confuse people.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Manners Mochi cares about</h3>
+        <ul>
+          <li><b>Nakamise:</b> don't eat while walking. Eat in front of the stall you bought from, then move on.</li>
+          <li>Trash cans are rare, so carry a little bag for wrappers.</li>
+          <li>Trains are quiet: no phone calls, and keep voices low.</li>
+          <li>Shoes come off wherever you see a step up or slippers.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Weather &amp; packing</h3>
+        <ul>
+          <li>Late October is roughly <b>mid-60s °F days and mid-50s nights</b>. Pack layers.</li>
+          <li>Bring a rain jacket; October gets real rain.</li>
+          <li>teamLab: shorts or pants that roll above the knee. You wade barefoot and some floors are mirrors.</li>
+          <li>Comfy shoes. You'll walk 15,000 steps without noticing.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Just in case</h3>
+        <ul>
+          <li><b>110</b> police · <b>119</b> ambulance / fire</li>
+          <li>Hotel: Mimaru Suites Tokyo Asakusa, 1-10-13 Hanakawado, Taito-ku</li>
+          <li>Show the taxi driver this: <span lang="ja" style="font-weight:900">台東区花川戸1-10-13 ミマルスイーツ東京浅草</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Tokyo Crew ’26.</b> Made for the crew, starring Mochi, an original lucky cat.</p>
+    <p>Facts checked in early Oct 2026. Hours and prices change, so check the official pages linked above before you go. Map tiles © <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a> and contributors; place coordinates from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> and Japan's GSI.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script>
+/* ===================== DATA ===================== */
+const HOTEL = {lat:35.712875, lng:139.799438};
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const DAYS = [
+  {d:'Sat 10/17', where:'San Francisco', what:'Depart SFO', kind:'travel', more:`<ul><li>ZIPAIR <b>ZG025</b>, departs 4:45pm, nonstop to Narita.</li><li>You cross the date line and lose Saturday night, so Sunday disappears into the sky.</li><li>ZIPAIR is no-frills: meals and comfort items are paid extras unless pre-ordered. Pack snacks, a layer and charged tablets.</li></ul>`},
+  {d:'Sun 10/18', where:'Arrive Tokyo', what:'Land at Narita ~8pm', kind:'travel', more:`<ul><li>Keisei Access Express goes direct to Asakusa in about 1 hr. Board trains for Haneda Airport or Nishi-Magome.</li><li>Check in at <b>Mimaru Suites Asakusa</b> (5 nights, 10/18–10/23).</li><li>Straight to bed. Tomorrow's 5am wake-up is a feature, not a bug.</li></ul>`},
+  {d:'Mon 10/19', where:'Tokyo · Asakusa', what:'Explore the neighborhood, adjust to the time zone', kind:'', more:`<ul><li>Do the <a href="#walk" data-route="sunrise">Sunrise temple loop</a>. Senso-ji before 7am belongs to you.</li><li>Breakfast melon pan from Kagetsudo, still warm.</li><li>Afternoon: Hanayashiki rides, or the <a href="#walk" data-route="cats">Lucky cat river walk</a>.</li><li>Keep naps short and get outside in daylight.</li></ul>`},
+  {d:'Tue 10/20', where:'Toyosu', what:'teamLab Planets', kind:'big', more:`<ul><li>Barefoot through knee-deep water and mirrored rooms. Wear <b>shorts or pants that roll up</b> (free rental shorts exist). Bring a change of clothes for little ones.</li><li>Kid favorite: the koi pond, where fish turn into flowers when you touch them. Also the Infinite Crystal Universe and the Floating Flower Garden.</li><li>Allow 2–3 hrs. Open 8:30am–10pm. Kids 4–12 ¥1,500; adults from ¥4,200 depending on time slot.</li><li>Getting there: Ginza Line to Shimbashi, then the Yurikamome to Shin-Toyosu (1 min walk). About 55 min.</li><li>After: the free footbath at Toyosu Senkyaku Banrai.</li></ul><p class="src">teamLab Planets is open through 2027.</p>`},
+  {d:'Wed 10/21', where:'Toyosu', what:'KidZania Tokyo', kind:'big', more:`<ul><li>A kid-sized city where kids (3–15) do real jobs, like pilot, firefighter or sushi chef, and get paid in <b>kidZos</b>.</li><li>Two sessions: <b>9am–3pm</b> or <b>4–9pm</b>. Book ahead because sessions sell out.</li><li>Parents watch through the windows and can't join most activities. Coffee time.</li><li>Language: most activities are in Japanese. KidZania lists an English Activities Program for 2026, so ask what runs on Wednesdays when you book.</li><li>At LaLaport Toyosu, near Toyosu Station, one stop from teamLab.</li><li>Heads up: Suzukien matcha is closed today.</li></ul>`},
+  {d:'Thu 10/22', where:'Tokyo', what:'Open day', kind:'open', more:`<ul><li>Idea: the <a href="#pokemon">Pokémon walk</a> to Skytree, then the Sumida Aquarium in the same building.</li><li>Idea: <a href="#zauo">Zauo dinner</a>. The Kameido branch opens at 5pm on weekdays.</li></ul>`},
+  {d:'Fri 10/23', where:'Tokyo', what:'Open day · Mimaru check-out', kind:'open', more:`<ul><li>The hotel sheet has Mimaru booked 10/18–10/23. Next stay: <b>TBD</b>.</li><li>Idea: the <a href="#extras">spaceship boat</a> down the river to Odaiba.</li></ul>`},
+  {d:'Sat 10/24', where:'Niigata', what:'Day trip to Echigo-Yuzawa', kind:'big', more:`<ul><li>Joetsu Shinkansen from <b>Ueno</b>, about 70 min.</li><li>Yuzawa Kogen Ropeway for autumn leaves. Its Autumn Fair runs to Nov 8, and there's a zipline and a summer bobsled up top.</li><li>Ponshukan in the station: sake coin tastings for the adults, the sake bath and bakudan onigiri for everyone.</li><li>CoCoLo Yuzawa by the gates: hegi-soba, gacha and souvenirs.</li></ul>`},
+  {d:'Sun 10/25', where:'Tokyo', what:'Open day', kind:'open', more:`<ul><li>Idea: PokéPark KANTO, if tickets can be had.</li><li>Idea: weekend lunch at Zauo Kameido, from 11:30.</li></ul>`},
+  {d:'Mon 10/26', where:'Tokyo', what:'Open day · last full day', kind:'open', more:`<ul><li>Idea: souvenir sweep. Do the <a href="#walk" data-route="kappa">Kappabashi &amp; fake food</a> walk, a Don Quijote snack haul, and the Pokémon Center one more time.</li></ul>`},
+  {d:'Tue 10/27', where:'Depart Tokyo', what:'Travel home', kind:'travel', more:`<ul><li>Pack the snacks in your checked bag. You'll have more than you think.</li></ul>`},
+];
+
+/* places: verified coordinates (OpenStreetMap / GSI geocoding) */
+const CATS = {
+  eat:{label:'Eat', ico:'🍜'}, sweet:{label:'Sweets', ico:'🍡'}, see:{label:'See', ico:'⛩️'}, kids:{label:'Kids', ico:'🎡'}, gem:{label:'Hidden gems', ico:'💎'}
+};
+const PLACES = [
+  // SEE
+  {id:'kaminarimon', c:'see', n:'Kaminarimon (Thunder Gate)', j:'雷門', lat:35.71113, lng:139.79637, b:'The giant red lantern. Photo first, crowds later: it\'s best before 8am.', say:'The Thunder Gate! The lantern weighs about 700 kilos. That is a lot of cat food.'},
+  {id:'nakamise', c:'see', n:'Nakamise-dori', j:'仲見世通り', lat:35.71252, lng:139.79652, b:'250m of snack and souvenir stalls up to the temple. Eat in front of the stall, not while walking.', say:'Nakamise rule: eat where you buy, then walk. Ningyo-yaki cakes are my favorite.'},
+  {id:'sensoji', c:'see', n:'Senso-ji Temple', j:'浅草寺', lat:35.71478, lng:139.79667, b:'Tokyo\'s oldest temple. Waft the incense smoke over yourself for good health, then try omikuji fortunes (¥100).', say:'Shake the omikuji box for a fortune. Bad fortune? Tie it to the rack and leave it behind!'},
+  {id:'pagoda', c:'see', n:'Five-Storey Pagoda', j:'五重塔', lat:35.71410, lng:139.79604, b:'Beautiful lit up at night. Kids, count the roofs.'},
+  {id:'asakusajinja', c:'see', n:'Asakusa Shrine', j:'浅草神社', lat:35.71481, lng:139.79750, b:'A quieter shrine right beside Senso-ji, with guardian lion-dogs at the entrance.'},
+  {id:'azumabashi', c:'see', n:'Azumabashi Bridge', j:'吾妻橋', lat:35.71011, lng:139.79893, b:'The red bridge, with Skytree and the golden "flame" building behind it. The classic Asakusa photo.'},
+  {id:'skytree', c:'see', n:'Tokyo Skytree', j:'東京スカイツリー', lat:35.71005, lng:139.81071, b:'634m tall, the tallest tower in the world. Decks at 350m and 450m. Sunset is magic.', say:'Skytree is 634 meters tall. Six-three-four sounds like mu-sa-shi in Japanese, the old name for Tokyo!'},
+  {id:'sumidapark', c:'see', n:'Sumida Park', j:'隅田公園', lat:35.71500, lng:139.80100, b:'A riverside park with playground corners, the best place to watch the water buses go by.'},
+  {id:'tic', c:'see', n:'Tourist Info Center rooftop', j:'浅草文化観光センター', lat:35.71064, lng:139.79652, b:'Free 8F terrace looking straight down Nakamise to the temple. Clean restrooms too.'},
+  // KIDS
+  {id:'pokemon', c:'kids', n:'Pokémon Center Skytree Town', j:'ポケモンセンタースカイツリータウン', lat:35.71024, lng:139.81195, b:'Solamachi East Yard 4F, about 10am–9pm. Rayquaza is the store mascot.', say:'This is it, the Pokémon Center! East Yard, fourth floor. Hold on to your wallets.'},
+  {id:'aquarium', c:'kids', n:'Sumida Aquarium', j:'すみだ水族館', lat:35.70980, lng:139.80950, b:'In Solamachi, with penguins and a giant jellyfish wall. Open till 8pm on weekdays and 9pm on weekends.'},
+  {id:'hanayashiki', c:'kids', n:'Hanayashiki', j:'浅草花やしき', lat:35.71550, lng:139.79461, b:'Japan\'s oldest amusement park, with a roller coaster from 1953. 10am–6pm.', say:'Hanayashiki is the oldest amusement park in Japan. The roller coaster goes right past people\'s houses!'},
+  {id:'sampleya', c:'kids', n:'Ganso Shokuhin Sample-ya', j:'元祖食品サンプル屋', lat:35.71489, lng:139.78913, b:'Fake-food shop and workshop. Make wax tempura (book ahead) or buy sushi magnets.'},
+  {id:'kappabashi', c:'kids', n:'Kappabashi Kitchen Street', j:'かっぱ橋道具街', lat:35.71306, lng:139.78850, b:'800m of chef-supply shops, with knives, plastic food and every bowl ever made.'},
+  {id:'donki', c:'kids', n:'Don Quijote Asakusa', j:'ドン・キホーテ浅草', lat:35.71386, lng:139.79309, b:'Chaotic, open late, every KitKat flavor. Gacha machines too.'},
+  // EAT
+  {id:'daikokuya', c:'eat', n:'Daikokuya Tempura', j:'大黒家天麩羅', lat:35.71274, lng:139.79559, b:'Famous since 1887 for tendon: tempura on rice in a dark, sweet sauce. Expect a line.'},
+  {id:'sometaro', c:'eat', n:'Sometaro', j:'染太郎', lat:35.71194, lng:139.79092, b:'An old wooden house where you cook your own okonomiyaki at the table. Kids love flipping.', say:'At Sometaro you make your own okonomiyaki pancake. Flip it with confidence!'},
+  {id:'imahan', c:'eat', n:'Asakusa Imahan', j:'浅草今半', lat:35.71392, lng:139.79222, b:'The splurge: classic wagyu sukiyaki and shabu-shabu since 1895.'},
+  {id:'yoroiya', c:'eat', n:'Yoroiya Ramen', j:'与ろゐ屋', lat:35.71274, lng:139.79674, b:'Light, yuzu-scented shoyu ramen just off Nakamise. A good first ramen.'},
+  {id:'yokocho', c:'eat', n:'Asakusa Yokocho', j:'浅草横町', lat:35.71407, lng:139.79362, b:'A lantern-lit indoor food alley with lots of little stalls, so everyone picks their own.'},
+  {id:'hoppy', c:'eat', n:'Hoppy Street', j:'ホッピー通り', lat:35.71376, lng:139.79422, b:'Outdoor izakaya row with beef stew and skewers. Grown-up dinner energy.'},
+  {id:'kamiya', c:'eat', n:'Kamiya Bar', j:'神谷バー', lat:35.71092, lng:139.79751, b:'Japan\'s first Western-style bar (1880). Grown-ups: try the "Denki Bran" brandy cocktail.'},
+  {id:'pelican', c:'eat', n:'Pelican Bakery', j:'パンのペリカン', lat:35.70849, lng:139.79135, b:'Only makes two things, a loaf and rolls, and has done since 1942. Sells out early.'},
+  // SWEETS
+  {id:'kagetsudo', c:'sweet', n:'Asakusa Kagetsudo', j:'浅草花月堂', lat:35.71461, lng:139.79519, b:'Giant warm melon pan, crunchy on top and fluffy inside. The jet-lag breakfast.', say:'Kagetsudo melon pan is as big as my head. And my head is very big.'},
+  {id:'suzukien', c:'sweet', n:'Suzukien Matcha Gelato', j:'壽々喜園', lat:35.71638, lng:139.79693, b:'Matcha gelato in 7 intensity levels. Closed Wed Oct 21.', say:'Seven levels of matcha! I recommend starting at level one. Level seven is for heroes.'},
+  {id:'menchi', c:'sweet', n:'Asakusa Menchi', j:'浅草メンチ', lat:35.71289, lng:139.79606, b:'Not sweet, but a snack: a juicy fried meat cutlet. Eat it at the counter.'},
+  {id:'kameju', c:'sweet', n:'Kameju', j:'亀十', lat:35.71065, lng:139.79675, b:'Fluffy dorayaki (pancake + red bean) famous across Tokyo. Lines move fast.'},
+  {id:'umezono', c:'sweet', n:'Umezono', j:'梅園', lat:35.71238, lng:139.79634, b:'Old-school sweet shop (1854): warm awa-zenzai, millet mochi with sweet bean.'},
+  {id:'funawa', c:'sweet', n:'Funawa', j:'舟和', lat:35.71191, lng:139.79638, b:'Sweet-potato yokan, an Asakusa classic since 1902.'},
+  // GEMS
+  {id:'imado', c:'gem', n:'Imado Shrine', j:'今戸神社', lat:35.71920, lng:139.80351, b:'Said to be the birthplace of the maneki-neko lucky cat. Cat statues everywhere.', say:'Imado Shrine! My family is from here. Please say hello to all the cat statues for me.'},
+  {id:'matsuchiyama', c:'gem', n:'Matsuchiyama Shoden', j:'待乳山聖天', lat:35.71735, lng:139.80298, b:'A hilltop temple where people offer daikon radishes for good health. Radish art everywhere.'},
+  {id:'nitenmon', c:'gem', n:'Nitenmon Gate', j:'二天門', lat:35.71445, lng:139.79790, b:'Senso-ji\'s quiet side gate, from the 1600s. It\'s the closest way in from the hotel.'},
+  {id:'riverwalk', c:'gem', n:'Sumida River Walk', j:'すみだリバーウォーク', lat:35.71180, lng:139.80135, b:'A footbridge right beside the train bridge, with glass floor panels over the river. Trains rumble past at eye level.'},
+  {id:'mizumachi', c:'gem', n:'Tokyo Mizumachi', j:'東京ミズマチ', lat:35.71056, lng:139.80534, b:'Cafés and bakeries tucked under the train tracks along a little canal.'},
+  {id:'ushijima', c:'gem', n:'Ushijima Shrine', j:'牛嶋神社', lat:35.71292, lng:139.80480, b:'Rub the stone cow where it hurts and it\'s said to heal you.'},
+  {id:'sakurabashi', c:'gem', n:'Sakurabashi Bridge', j:'桜橋', lat:35.71744, lng:139.80674, b:'An X-shaped footbridge across the Sumida with wide-open river views.'},
+  {id:'kappa', c:'gem', n:'Kappa Kawataro statue', j:'かっぱ河太郎', lat:35.71435, lng:139.78871, b:'A golden kappa, the river imp Kappabashi is named after. High-five him.'},
+  {id:'chefhead', c:'gem', n:'Giant chef head (Niimi)', j:'ニイミ', lat:35.71059, lng:139.78846, b:'A building wearing a giant chef\'s head and hat. The landmark at the south end of Kappabashi.'},
+];
+
+const ROUTES = [
+  {id:'sunrise', name:'Sunrise temple loop', meta:'~45 min · jet-lag morning', stops:['nitenmon','asakusajinja','sensoji','pagoda','nakamise','kaminarimon','kameju'], say:'Sunrise loop! Go in the quiet back gate, see the temple with no crowds, and come out at the big lantern.'},
+  {id:'cats', name:'Lucky cat river walk', meta:'~50 min · hidden gems', stops:['sumidapark','matsuchiyama','imado','sakurabashi','sumidapark'], say:'River walk to my hometown shrine, then back over the X bridge. Bring coins for the omikuji!'},
+  {id:'poke', name:'Pokémon run', meta:'~20 min one way', stops:['riverwalk','mizumachi','ushijima','skytree','pokemon'], say:'Over the glass footbridge, along Mizumachi, a quick cow pat, then up to the Pokémon Center!'},
+  {id:'kappa', name:'Kappabashi & fake food', meta:'~1.5 hrs with stops', stops:['nitenmon','hanayashiki','hoppy','kappa','sampleya','kappabashi','chefhead','sometaro','kaminarimon'], say:'Rides, then fake food, then real food. Sometaro okonomiyaki to finish. Perfect day.'},
+];
+
+const PHRASES = [
+  {ro:'Konnichiwa', ja:'こんにちは', en:'Hello'},
+  {ro:'Arigatō gozaimasu', ja:'ありがとうございます', en:'Thank you (very much)'},
+  {ro:'Sumimasen', ja:'すみません', en:'Excuse me / sorry'},
+  {ro:'Kore kudasai', ja:'これください', en:'This one, please'},
+  {ro:'Oishii!', ja:'おいしい！', en:'Delicious!'},
+  {ro:'Toire wa doko desu ka?', ja:'トイレはどこですか？', en:'Where is the toilet?'},
+  {ro:'Kanpai!', ja:'乾杯！', en:'Cheers!'},
+  {ro:'Pikachū ga daisuki!', ja:'ピカチュウが大好き！', en:'I love Pikachu!'},
+];
+
+const HERO_LINES = [
+  "Konnichiwa! I'm Mochi, your lucky cat guide. Tap me any time and I'll tell you something.",
+  "Lucky cats like me come from Imado Shrine, about 12 minutes up the river from our hotel. It's basically my house.",
+  "Nine travelers, one flight, ten days of Tokyo snacks. I did the math and it's delicious.",
+  "There's a restaurant where you catch your own dinner and they bang a drum when you do. It's real. Scroll down!",
+  "The nearest Pokémon Center is about a 20-minute walk from the hotel, across the river. I mapped it!",
+  "Jet-lag secret: when you wake up at 5am, go to Senso-ji. You get the whole temple to yourselves.",
+  "Japan is 16 hours ahead of California. When you're having dinner there, I'm having breakfast here.",
+];
+const SECTION_LINES = {
+  plan:"Here's the whole trip as a train line. Tap a stop and I'll show you the plan.",
+  zauo:"Zauo! You fish from a boat inside the restaurant. Remember: if you catch it, you eat it.",
+  walk:"Everything inside the red ring is about 15 minutes on foot. Tap a place and I'll tell you about it!",
+  pokemon:"Pokémon Center Skytree Town is on the 4th floor of Solamachi. Kids first, wallets second.",
+  extras:"Surprise box! The spaceship boat is my favorite. Then the matcha level 7 challenge.",
+  knowhow:"Tap a phrase and your phone will say it out loud. I'd do it myself, but I'm a cat.",
+};
+const TAP_LINES = [
+  "Maneki-neko with the left paw up invites people; with the right paw up, money. I wave both, just in case.",
+  "Konbini egg sandwiches are life-changing. This is not a drill.",
+  "Bow a little when you say thank you. Arigatō gozaimasu!",
+  "Vending machines here sell hot drinks. Hot corn soup in a can. Try it.",
+  "On escalators in Tokyo, stand on the left and let people walk up the right.",
+  "Senso-ji was founded in 628. That's older than every cat I know.",
+];
+</script>
+
+<script>
+/* ===================== SPEECH + MASCOT STATE ===================== */
+window.MochiState = {mouth:0, hop:0, wave:1.6, happy:0, pointer:{x:innerWidth/2,y:innerHeight*.4}, docked:false};
+const MS = window.MochiState;
+const heroTxt = document.querySelector('#hero-bubble .txt');
+const heroSr = document.getElementById('hero-sr');
+const dock = document.getElementById('dock-bubble');
+const dockTxt = dock.querySelector('.txt');
+let typeTimer = null, dockHideTimer = null;
+
+function typeInto(el, text){
+  clearTimeout(typeTimer);
+  if (REDUCED){ el.textContent = text; MS.mouth = 0.6; typeTimer = setTimeout(()=>MS.mouth=0, 500); return; }
+  let i = 0; el.textContent = '';
+  const step = () => {
+    i++;
+    el.textContent = text.slice(0, i);
+    const ch = text[i-1] || ' ';
+    MS.mouth = /[aeiouyAEIOUY!?]/.test(ch) ? 1 : /[\s.,—\-:]/.test(ch) ? 0.05 : 0.45;
+    if (i < text.length) typeTimer = setTimeout(step, /[.!?]/.test(ch) ? 190 : /,/.test(ch) ? 110 : 24);
+    else MS.mouth = 0;
+  };
+  step();
+}
+function say(text, opts={}){
+  MS.wave = Math.max(MS.wave, 1.2);
+  if (!MS.docked){
+    typeInto(heroTxt, text); heroSr.textContent = text;
+  } else {
+    dock.classList.add('show');
+    typeInto(dockTxt, text);
+    clearTimeout(dockHideTimer);
+    dockHideTimer = setTimeout(()=>dock.classList.remove('show'), Math.max(6000, text.length*70));
+  }
+}
+window.mochiSay = say;
+dock.querySelector('.x').addEventListener('click', e=>{ e.stopPropagation(); dock.classList.remove('show'); clearTimeout(typeTimer); MS.mouth=0; });
+
+let heroIdx = 0;
+document.getElementById('next-tip').addEventListener('click', ()=>{ heroIdx=(heroIdx+1)%HERO_LINES.length; MS.hop=1; say(HERO_LINES[heroIdx]); });
+document.getElementById('prev-tip').addEventListener('click', ()=>{ heroIdx=(heroIdx-1+HERO_LINES.length)%HERO_LINES.length; say(HERO_LINES[heroIdx]); });
+
+let tapIdx = 0;
+function mochiTapped(){
+  MS.hop = 1;
+  if (!MS.docked){ heroIdx=(heroIdx+1)%HERO_LINES.length; say(HERO_LINES[heroIdx]); }
+  else { say(TAP_LINES[tapIdx++ % TAP_LINES.length]); }
+}
+const stage = document.getElementById('mochi-stage');
+stage.addEventListener('click', mochiTapped);
+stage.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); mochiTapped(); }});
+addEventListener('pointermove', e=>{ MS.pointer.x = e.clientX; MS.pointer.y = e.clientY; }, {passive:true});
+
+/* ---- stage flight: hero anchor -> corner dock (scroll-linked, the one orchestrated moment) ---- */
+const anchor = document.getElementById('mochi-anchor');
+const heroEl = document.querySelector('.hero');
+let base = 0;
+function dockSize(){ return innerWidth < 720 ? 84 : 112; }
+function sizeStage(){
+  base = Math.round(anchor.getBoundingClientRect().width);
+  stage.style.width = stage.style.height = base + 'px';
+  window.dispatchEvent(new CustomEvent('mochi-resize', {detail:base}));
+}
+const ease = t => t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+function placeStage(){
+  const a = anchor.getBoundingClientRect();
+  const ds = dockSize();
+  const dx = innerWidth - ds - 12, dy = innerHeight - ds - 12;
+  const span = Math.max(240, heroEl.offsetHeight * .55);
+  const t = Math.min(1, Math.max(0, scrollY / span));
+  const e = REDUCED ? (t > .5 ? 1 : 0) : ease(t);
+  const s = 1 + (ds/base - 1) * e;
+  const x = a.left + (dx - a.left) * e, y = a.top + (dy - a.top) * e;
+  stage.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${s.toFixed(4)})`;
+  const docked = e > .97;
+  if (docked !== MS.docked){
+    MS.docked = docked;
+    stage.setAttribute('aria-label', docked ? 'Mochi the lucky cat. Press for a tip.' : 'Mochi the lucky cat. Press for another tip.');
+    if (!docked){ dock.classList.remove('show'); }
+  }
+  dock.style.right = (ds + 26) + 'px';
+}
+sizeStage(); placeStage();
+addEventListener('resize', ()=>{ sizeStage(); placeStage(); });
+addEventListener('scroll', placeStage, {passive:true});
+window.mochiPlace = placeStage;
+
+/* ---- section narration ---- */
+const spoken = new Set(); let lastSec = null;
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if (!en.isIntersecting) return;
+    const k = en.target.dataset.mochi;
+    document.querySelectorAll('.nav a.nl').forEach(a=>a.setAttribute('aria-current', a.getAttribute('href')==='#'+en.target.id ? 'true':'false'));
+    if (k === lastSec || !MS.docked) return;
+    lastSec = k;
+    if (spoken.has(k)) return;
+    spoken.add(k); say(SECTION_LINES[k]);
+  });
+}, {rootMargin:'-35% 0px -45% 0px'});
+document.querySelectorAll('[data-mochi]').forEach(s=>io.observe(s));
+
+/* first line */
+setTimeout(()=>say(HERO_LINES[0]), REDUCED ? 0 : 700);
+</script>
+
+<script>
+/* ===================== ITINERARY ===================== */
+(function(){
+  const ol = document.getElementById('line');
+  DAYS.forEach((d,i)=>{
+    const li = document.createElement('li');
+    li.className = 'stop ' + d.kind; li.dataset.open = 'false';
+    const id = 'day-'+i;
+    li.innerHTML = `<span class="dot" aria-hidden="true"></span>
+      <button type="button" aria-expanded="false" aria-controls="${id}">
+        <span class="d">${d.d}</span>
+        <span><span class="what">${d.what}${d.kind==='open'?'<span class="badge open">free</span>':''}</span><span class="where">${d.where}</span></span>
+        <span class="chev" aria-hidden="true">›</span>
+      </button>
+      <div class="more" id="${id}">${d.more}</div>`;
+    const btn = li.querySelector('button');
+    btn.addEventListener('click', ()=>{
+      const open = li.dataset.open !== 'true';
+      li.dataset.open = open; btn.setAttribute('aria-expanded', open);
+    });
+    ol.appendChild(li);
+  });
+  // open Mon by default so the pattern is obvious
+  ol.children[2].querySelector('button').click();
+  ol.addEventListener('click', e=>{
+    const a = e.target.closest('a[data-route]'); if (!a) return;
+    window.pendingRoute = a.dataset.route;
+    if (window.selectRoute) setTimeout(()=>window.selectRoute(a.dataset.route), 400);
+  });
+})();
+
+/* ===================== COUNTDOWN ===================== */
+(function(){
+  const dep = new Date('2026-10-17T16:45:00-07:00').getTime();
+  const home = new Date('2026-10-27T23:59:00+09:00').getTime();
+  const D=document.getElementById('cd-d'),H=document.getElementById('cd-h'),M=document.getElementById('cd-m'),T=document.getElementById('count-title');
+  function tick(){
+    const now = Date.now(); let ms = dep - now;
+    if (ms <= 0){
+      T.textContent = now < home ? 'We\'re in Japan! いってきます' : 'おかえり, welcome home!';
+      D.textContent = H.textContent = M.textContent = '0'; return;
+    }
+    D.textContent = Math.floor(ms/864e5); H.textContent = Math.floor(ms%864e5/36e5); M.textContent = Math.floor(ms%36e5/6e4);
+  }
+  tick(); setInterval(tick, 30000);
+})();
+
+/* ===================== CHECKLIST (per-device) ===================== */
+(function(){
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('tokyo26-todo')||'{}'); } catch(e){}
+  document.querySelectorAll('#todo input').forEach(cb=>{
+    cb.checked = !!saved[cb.dataset.k];
+    cb.addEventListener('change', ()=>{
+      saved[cb.dataset.k] = cb.checked;
+      try { localStorage.setItem('tokyo26-todo', JSON.stringify(saved)); } catch(e){}
+      if (cb.checked){ MS.hop = 1; MS.happy = 1.2; }
+    });
+  });
+})();
+
+/* ===================== DRUM (Web Audio taiko) ===================== */
+(function(){
+  let ctx;
+  function hit(when, pitch, vol){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.setValueAtTime(pitch, when); o.frequency.exponentialRampToValueAtTime(42, when+.35);
+    g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(vol, when+.008); g.gain.exponentialRampToValueAtTime(0.0001, when+.6);
+    o.connect(g).connect(ctx.destination); o.start(when); o.stop(when+.65);
+    const len = ctx.sampleRate*.08, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i=0;i<len;i++) d[i] = (Math.random()*2-1) * Math.pow(1-i/len, 3);
+    const n = ctx.createBufferSource(), ng = ctx.createGain(), f = ctx.createBiquadFilter();
+    f.type='lowpass'; f.frequency.value = 900; ng.gain.value = vol*.5;
+    n.buffer = buf; n.connect(f).connect(ng).connect(ctx.destination); n.start(when);
+  }
+  document.getElementById('drum').addEventListener('click', ()=>{
+    try {
+      ctx = ctx || new (window.AudioContext||window.webkitAudioContext)();
+      const t = ctx.currentTime + .02;
+      hit(t,130,.9); hit(t+.28,130,.9); hit(t+.62,110,.7); hit(t+.78,110,.7); hit(t+.94,150,1);
+    } catch(e){}
+    MS.hop = 1; MS.happy = 2;
+    say('DON! DON! DOKO-DON! Big catch! Everybody cheer! 🎉');
+  });
+})();
+
+/* ===================== PHRASES (speechSynthesis) ===================== */
+(function(){
+  const wrap = document.getElementById('phrases');
+  const synth = window.speechSynthesis;
+  PHRASES.forEach(p=>{
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'phrase';
+    b.innerHTML = `<span class="ro">${p.ro}</span><span class="ja" lang="ja">${p.ja}</span><span class="en">${p.en}</span>`;
+    b.setAttribute('aria-label', `${p.ro}: ${p.en}. Play pronunciation.`);
+    b.addEventListener('click', ()=>{
+      say(`${p.ro}! That means "${p.en}."`);
+      if (!synth) return;
+      synth.cancel();
+      const u = new SpeechSynthesisUtterance(p.ja);
+      u.lang = 'ja-JP'; u.rate = .85;
+      const v = synth.getVoices().find(v=>/^ja/i.test(v.lang)); if (v) u.voice = v;
+      b.classList.add('playing'); u.onend = u.onerror = ()=>b.classList.remove('playing');
+      synth.speak(u);
+    });
+    wrap.appendChild(b);
+  });
+})();
+</script>
+
+<script>
+/* ===================== WALK MAP (Leaflet) ===================== */
+function walkMins(p){
+  const R=6371000, toR=x=>x*Math.PI/180;
+  const dLat=toR(p.lat-HOTEL.lat), dLng=toR(p.lng-HOTEL.lng);
+  const a=Math.sin(dLat/2)**2+Math.cos(toR(HOTEL.lat))*Math.cos(toR(p.lat))*Math.sin(dLng/2)**2;
+  const m = 2*R*Math.asin(Math.sqrt(a));
+  return Math.max(1, Math.round(m*1.3/72)); // street detour factor, kid pace ~72 m/min
+}
+function initMap(){
+  if (!window.L) return setTimeout(initMap, 150);
+  const map = L.map('map', {scrollWheelZoom:false, zoomControl:true, tap:true}).setView([HOTEL.lat, HOTEL.lng], 15);
+  // Esri World Street Map: bilingual English + Japanese labels, no API key
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom:19, attribution:'Tiles © <a href="https://www.esri.com/">Esri</a> — Esri, HERE, Garmin, METI/NASA, USGS, © OpenStreetMap contributors'
+  }).addTo(map);
+  map.on('focus', ()=>map.scrollWheelZoom.enable());
+  map.on('blur', ()=>map.scrollWheelZoom.disable());
+
+  L.circle([HOTEL.lat, HOTEL.lng], {radius:1000, color:'#D3382B', weight:3, dashArray:'8 8', fillColor:'#D3382B', fillOpacity:.05}).addTo(map);
+  L.marker([HOTEL.lat+0.0091, HOTEL.lng-0.0035], {interactive:false, icon:L.divIcon({className:'', html:'<span class="ring-label">≈15 min walk</span>', iconSize:[110,22], iconAnchor:[55,11]})}).addTo(map);
+
+  const pin = (cls, ico) => L.divIcon({className:'', html:`<span class="pin ${cls}"><i>${ico}</i></span>`, iconSize: cls==='c-home'?[44,44]:[32,32], iconAnchor: cls==='c-home'?[22,44]:[16,32], popupAnchor:[0,-30]});
+  L.marker([HOTEL.lat, HOTEL.lng], {icon:pin('c-home','🏮'), zIndexOffset:1000, keyboard:true, title:'Home base: Mimaru Suites Asakusa'})
+    .addTo(map).bindPopup('<b>Home base</b><br>Mimaru Suites Tokyo Asakusa<br>1-10-13 Hanakawado · 3 min to Asakusa Stn');
+
+  const markers = {};
+  PLACES.forEach(p=>{
+    p.mins = walkMins(p);
+    const dir = `https://www.google.com/maps/dir/?api=1&origin=${HOTEL.lat},${HOTEL.lng}&destination=${p.lat},${p.lng}&travelmode=walking`;
+    const m = L.marker([p.lat,p.lng], {icon:pin('c-'+p.c, CATS[p.c].ico), title:p.n, keyboard:true})
+      .bindPopup(`<b>${p.n}</b> <span lang="ja" style="opacity:.7">${p.j}</span><br>${p.b}<br><a class="pop-link" href="${dir}" target="_blank" rel="noopener">Walking directions (~${p.mins} min)</a>`);
+    m.on('click', ()=>{ highlight(p.id, false); say(p.say || p.b); });
+    m.addTo(map); markers[p.id] = m;
+  });
+
+  /* list */
+  const list = document.getElementById('places');
+  Object.entries(CATS).forEach(([k,c])=>{
+    const items = PLACES.filter(p=>p.c===k).sort((a,b)=>a.mins-b.mins);
+    const h = document.createElement('h3'); h.dataset.cat = k; h.innerHTML = `<span aria-hidden="true">${c.ico}</span> ${c.label}`;
+    const ul = document.createElement('ul'); ul.dataset.cat = k;
+    items.forEach(p=>{
+      const li = document.createElement('li');
+      li.innerHTML = `<button type="button" class="place" data-id="${p.id}">
+        <span class="ico c-${p.c}" aria-hidden="true">${c.ico}</span>
+        <span><b>${p.n}</b><span class="jpn" lang="ja">${p.j}</span><p>${p.b}</p></span>
+        <span class="mins">${p.mins}′<small>walk</small></span></button>`;
+      li.querySelector('button').addEventListener('click', ()=>{ highlight(p.id, true); say(p.say || p.b); });
+      ul.appendChild(li);
+    });
+    list.append(h, ul);
+  });
+  function highlight(id, fly){
+    const p = PLACES.find(x=>x.id===id);
+    list.querySelectorAll('.place').forEach(b=>b.setAttribute('aria-current', b.dataset.id===id ? 'true':'false'));
+    if (fly){
+      if (innerWidth < 1000) document.getElementById('map').scrollIntoView({behavior:REDUCED?'auto':'smooth', block:'center'});
+      map.flyTo([p.lat,p.lng], 17, {duration: REDUCED ? 0 : .8});
+      setTimeout(()=>markers[id].openPopup(), REDUCED ? 0 : 820);
+    } else {
+      const el = list.querySelector(`.place[data-id="${id}"]`); if (el) el.scrollIntoView({block:'nearest'});
+    }
+  }
+
+  /* filters */
+  const chips = document.getElementById('chips');
+  const active = new Set(Object.keys(CATS));
+  Object.entries(CATS).forEach(([k,c])=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='chip'; b.setAttribute('aria-pressed','true');
+    b.innerHTML = `<span class="sw c-${k}" aria-hidden="true"></span>${c.ico} ${c.label}`;
+    b.addEventListener('click', ()=>{
+      const on = !active.has(k);
+      on ? active.add(k) : active.delete(k);
+      b.setAttribute('aria-pressed', on);
+      PLACES.filter(p=>p.c===k).forEach(p=> on ? markers[p.id].addTo(map) : markers[p.id].remove());
+      list.querySelectorAll(`[data-cat="${k}"]`).forEach(el=>el.hidden = !on);
+    });
+    chips.appendChild(b);
+  });
+
+  /* routes */
+  const rWrap = document.getElementById('routes'), info = document.getElementById('route-info');
+  let routeLayer = null;
+  function selectRoute(id){
+    const r = ROUTES.find(x=>x.id===id); if (!r) return;
+    rWrap.querySelectorAll('.route-btn').forEach(b=>b.setAttribute('aria-pressed', b.dataset.id===id));
+    if (routeLayer) routeLayer.remove();
+    const pts = [[HOTEL.lat,HOTEL.lng], ...r.stops.map(s=>{const p=PLACES.find(x=>x.id===s);return [p.lat,p.lng];})];
+    if (id !== 'poke') pts.push([HOTEL.lat,HOTEL.lng]);
+    routeLayer = L.layerGroup([
+      L.polyline(pts, {color:'#16173A', weight:9, opacity:.9, lineJoin:'round'}),
+      L.polyline(pts, {color:'#FFC93C', weight:4, dashArray:'2 10', lineCap:'round', lineJoin:'round'})
+    ]).addTo(map);
+    map.flyToBounds(L.latLngBounds(pts).pad(.18), {duration: REDUCED?0:.9});
+    const names = r.stops.map(s=>PLACES.find(x=>x.id===s).n);
+    const wp = r.stops.slice(0,-1).map(s=>{const p=PLACES.find(x=>x.id===s);return p.lat+','+p.lng;}).join('|');
+    const last = PLACES.find(x=>x.id===r.stops[r.stops.length-1]);
+    const dest = id==='poke' ? `${last.lat},${last.lng}` : `${HOTEL.lat},${HOTEL.lng}`;
+    const wps = id==='poke' ? wp : r.stops.map(s=>{const p=PLACES.find(x=>x.id===s);return p.lat+','+p.lng;}).join('|');
+    const gm = `https://www.google.com/maps/dir/?api=1&origin=${HOTEL.lat},${HOTEL.lng}&destination=${dest}&waypoints=${encodeURIComponent(wps)}&travelmode=walking`;
+    info.innerHTML = `<b>${r.name}:</b> Hotel → ${[...new Set(names)].join(' → ')}${id!=='poke'?' → Hotel':''}. <a href="${gm}" target="_blank" rel="noopener">Open in Google Maps</a>`;
+    say(r.say);
+  }
+  ROUTES.forEach(r=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='route-btn'; b.dataset.id=r.id; b.setAttribute('aria-pressed','false');
+    b.innerHTML = `<b>${r.name}</b><span>${r.meta}</span>`;
+    b.addEventListener('click', ()=>selectRoute(r.id));
+    rWrap.appendChild(b);
+  });
+  window.selectRoute = selectRoute;
+  document.getElementById('show-poke-route').addEventListener('click', ()=>{
+    document.getElementById('walk').scrollIntoView({behavior:REDUCED?'auto':'smooth'});
+    setTimeout(()=>selectRoute('poke'), REDUCED?0:700);
+  });
+  if (window.pendingRoute) selectRoute(window.pendingRoute);
+}
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+
+<script type="module">
+/* ===================== MOCHI — three.js toon lucky cat ===================== */
+import * as THREE from 'three';
+const MS = window.MochiState;
+const stageEl = document.getElementById('mochi-stage');
+const canvas = document.getElementById('mochi-canvas');
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function boot(){
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'low-power'}); }
+  catch(e){ stageEl.classList.add('no3d'); return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(26, 1, .1, 50);
+  camera.position.set(0, .15, 11.2);
+  camera.lookAt(0, -.05, 0);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa0d8, 1.6));
+  const key = new THREE.DirectionalLight(0xffffff, 2.4); key.position.set(-3, 4, 6); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffe2b8, 1.0); rim.position.set(4, 2, -3); scene.add(rim);
+
+  const grad = new THREE.DataTexture(new Uint8Array([150,150,150,255, 215,215,215,255, 255,255,255,255]), 3, 1);
+  grad.minFilter = grad.magFilter = THREE.NearestFilter; grad.needsUpdate = true;
+  const toon = c => new THREE.MeshToonMaterial({color:c, gradientMap:grad});
+  const INK = 0x16173A;
+  const inkMat = new THREE.MeshBasicMaterial({color:INK, side:THREE.BackSide});
+  const M = {
+    white: toon(0xFFFDF7), orange: toon(0xF2A23C), black: toon(0x2A2B45), pink: toon(0xF59AB0),
+    red: toon(0xD3382B), gold: toon(0xF6BF26), mouth: toon(0x7A1F2B), tongue: toon(0xF0788E),
+    eye: new THREE.MeshBasicMaterial({color:INK}), shine: new THREE.MeshBasicMaterial({color:0xffffff}),
+    ink: new THREE.MeshBasicMaterial({color:INK})
+  };
+  const outline = (mesh, k=.04) => { const o = new THREE.Mesh(mesh.geometry, inkMat); o.scale.setScalar(1+k); mesh.add(o); return mesh; };
+  const sphere = (r, mat, seg=40) => new THREE.Mesh(new THREE.SphereGeometry(r, seg, Math.round(seg*.7)), mat);
+
+  const root = new THREE.Group(); scene.add(root);
+  const bodyG = new THREE.Group(); root.add(bodyG);
+
+  // body
+  // calico patches painted into vertex colours so they hug the curved surface
+  const calico = (geo, patches) => {
+    const pos = geo.attributes.position, col = new Float32Array(pos.count*3), v = new THREE.Vector3();
+    const W = new THREE.Color(0xFFFDF7);
+    for (let i=0;i<pos.count;i++){
+      v.fromBufferAttribute(pos,i).normalize(); const c = W.clone();
+      for (const [dir, size, hex] of patches){
+        const wob = .05*Math.sin(Math.atan2(v.y,v.x)*5 + dir.x*7) + .04*Math.sin(v.z*9);
+        const edge = Math.cos(size + wob), d = v.dot(dir);
+        const k = Math.min(1, Math.max(0, (d - edge + .03) / .06));
+        c.lerp(hex, k*k*(3 - 2*k));
+      }
+      col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(col,3)); return geo;
+  };
+  const ORANGE = new THREE.Color(0xF2A23C), BLACK = new THREE.Color(0x2A2B45);
+  const calicoMat = new THREE.MeshToonMaterial({color:0xffffff, vertexColors:true, gradientMap:grad});
+  const bodyGeo = calico(new THREE.SphereGeometry(1,56,40), [[new THREE.Vector3(-.8,.05,.45).normalize(), .5, ORANGE],[new THREE.Vector3(.7,.4,-.6).normalize(), .4, BLACK]]);
+  const body = outline(new THREE.Mesh(bodyGeo, calicoMat), .035); body.scale.set(1.12, 1.0, .95); body.position.y = -1.05; bodyG.add(body);
+  [-1,1].forEach(s=>{ const f = outline(sphere(.33, M.white), .07); f.scale.set(1.15,.62,1.2); f.position.set(.48*s,-1.98,.52); bodyG.add(f); });
+
+  // collar + bell + koban
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(.98,.13,16,72), M.red); collar.rotation.x = Math.PI/2 - .12; collar.scale.set(1.04,.92,1); collar.position.y = -.33; outline(collar,.05); bodyG.add(collar);
+  const bell = outline(sphere(.2, M.gold), .08); bell.position.set(0,-.55,.93); bodyG.add(bell);
+  const slit = new THREE.Mesh(new THREE.BoxGeometry(.03,.12,.02), M.ink); slit.position.set(0,-.6,1.13); bodyG.add(slit);
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+  const g2 = cv.getContext('2d'); g2.fillStyle='#F6BF26'; g2.fillRect(0,0,256,256);
+  g2.strokeStyle='#b8860b'; g2.lineWidth=10; g2.strokeRect(22,22,212,212);
+  g2.fillStyle='#16173A'; g2.font='900 150px "Zen Maru Gothic", sans-serif'; g2.textAlign='center'; g2.textBaseline='middle'; g2.fillText('福',128,138);
+  const coinTex = new THREE.CanvasTexture(cv); coinTex.colorSpace = THREE.SRGBColorSpace;
+  const coin = new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.09,48), [M.gold, new THREE.MeshToonMaterial({map:coinTex, gradientMap:grad}), M.gold]);
+  coin.rotation.x = Math.PI/2; coin.scale.set(.78,1,1.25); coin.position.set(.36,-1.22,.93); coin.rotation.y = .1; outline(coin,.06); bodyG.add(coin);
+  const holdPaw = outline(sphere(.25, M.white), .08); holdPaw.scale.set(1.05,.85,.9); holdPaw.position.set(.66,-1.0,.86); bodyG.add(holdPaw);
+
+  // raised beckoning arm (pivot at shoulder)
+  const armPivot = new THREE.Group(); armPivot.position.set(-1.02,-.8,.52); bodyG.add(armPivot);
+  const arm = outline(new THREE.Mesh(new THREE.CapsuleGeometry(.25,.6,8,20), M.white), .07); arm.position.y = .42; armPivot.add(arm);
+  const pad = sphere(.1, M.pink); pad.scale.set(1.2,.9,.4); pad.position.set(0,.78,.2); armPivot.add(pad);
+  [-1,0,1].forEach(i=>{ const t = sphere(.045, M.pink, 16); t.position.set(i*.09,.9,.19); t.scale.z=.5; armPivot.add(t); });
+
+  // head
+  const head = new THREE.Group(); head.position.y = .62; root.add(head);
+  const A=1.32, B=1.12, C=1.12;
+  const skullGeo = calico(new THREE.SphereGeometry(1,72,52), [[new THREE.Vector3(-.62,.62,.48).normalize(), .52, ORANGE],[new THREE.Vector3(.5,.8,.3).normalize(), .3, BLACK]]);
+  const skull = outline(new THREE.Mesh(skullGeo, calicoMat), .03); skull.scale.set(A,B,C); head.add(skull);
+  const onHead = (x,y,lift=0) => {
+    const z = C*Math.sqrt(Math.max(0, 1 - (x*x)/(A*A) - (y*y)/(B*B)));
+    const n = new THREE.Vector3(x/(A*A), y/(B*B), z/(C*C)).normalize();
+    return {p:new THREE.Vector3(x,y,z).addScaledVector(n, lift), n};
+  };
+  const place = (mesh, x, y, lift=0) => { const {p,n} = onHead(x,y,lift); mesh.position.copy(p); mesh.lookAt(p.clone().add(n)); head.add(mesh); return mesh; };
+  // ears
+  [-1,1].forEach(s=>{
+    const ear = outline(new THREE.Mesh(new THREE.ConeGeometry(.42,.72,32), s<0 ? M.orange : M.white), .06);
+    ear.position.set(.8*s, .98, -.08); ear.rotation.z = -.42*s; ear.rotation.x = -.08; head.add(ear);
+    const inner = new THREE.Mesh(new THREE.ConeGeometry(.25,.46,32), M.pink); inner.scale.z = .35;
+    inner.position.set(.78*s, .94, .2); inner.rotation.z = -.42*s; inner.rotation.x = -.15; head.add(inner);
+  });
+  // eyes
+  const eyes = [-1,1].map(s=>{
+    const g = new THREE.Group(); place(g, .44*s, .06, -.02);
+    const e = sphere(.15, M.eye, 28); e.scale.set(.82,1.12,.45); g.add(e);
+    const h = sphere(.05, M.shine, 12); h.position.set(.05,.07,.06); g.add(h);
+    const h2 = sphere(.022, M.shine, 10); h2.position.set(-.04,-.06,.06); g.add(h2);
+    return g;
+  });
+  // blush
+  [-1,1].forEach(s=>{ const b = sphere(.2, M.pink, 24); b.scale.set(1.25,.6,.12); place(b, .82*s, -.22, -.01); });
+  // nose
+  const nose = sphere(.075, M.pink, 20); nose.scale.set(1.35,.9,.6); place(nose, 0, -.16, 0);
+  // ω mouth
+  [-1,1].forEach(s=>{ const arc = new THREE.Mesh(new THREE.TorusGeometry(.085,.024,8,24,Math.PI), M.ink); place(arc, .085*s, -.29, .005); arc.rotateZ(Math.PI); });
+  // open mouth (scaled by talking)
+  const mouthG = new THREE.Group(); place(mouthG, 0, -.42, -.03);
+  const mouth = sphere(.17, M.mouth, 28); mouth.scale.set(1.0,.05,.4); mouthG.add(mouth);
+  const tongue = sphere(.1, M.tongue, 20); tongue.scale.set(1.0,.5,.4); tongue.position.set(0,-.06,.03); mouthG.add(tongue);
+  // whiskers
+  [-1,1].forEach(s=>[0,1].forEach(i=>{
+    const w = new THREE.Mesh(new THREE.CylinderGeometry(.014,.014,.62,6), M.ink);
+    const {p} = onHead(1.02*s, -.12 - i*.16, 0);
+    w.position.set(p.x + .22*s, p.y - i*.02, p.z - .05);
+    w.rotation.z = Math.PI/2 + (i ? -.14 : .1)*s; head.add(w);
+  }));
+
+  // ---------- animation ----------
+  const spring = (s, target, k, d, dt) => { s.v += (-k*(s.x - target) - d*s.v) * dt; s.x += s.v * dt; };
+  const mouthS = {x:0,v:0}, hopS = {x:0,v:0}, sqS = {x:0,v:0}, yawS = {x:0,v:0}, pitS = {x:0,v:0};
+  let blinkT = 2 + Math.random()*3, blinking = 0, t = 0, last = performance.now(), running = true;
+
+  function resize(px){
+    renderer.setSize(px, px, false);
+    camera.aspect = 1; camera.updateProjectionMatrix();
+  }
+  resize(parseFloat(stageEl.style.width) || 300);
+  window.__mochi3d = true; stageEl.classList.remove('no3d');
+  addEventListener('mochi-resize', e => resize(e.detail));
+
+  function frame(now){
+    if (!running) return;
+    const dt = Math.min(1/30, (now - last)/1000); last = now; t += dt;
+    window.mochiPlace && window.mochiPlace();
+
+    // talking mouth
+    spring(mouthS, MS.mouth, 260, 22, dt);
+    const open = Math.max(0, Math.min(1.1, mouthS.x));
+    mouth.scale.y = .05 + open*.75; tongue.visible = open > .25;
+
+    // hop + squash (Playful spring)
+    if (MS.hop){ hopS.v += REDUCED ? 0 : 5.2; sqS.v -= REDUCED ? 0 : 3.2; MS.hop = 0; }
+    spring(hopS, 0, 90, 9, dt); spring(sqS, 0, 160, 10, dt);
+    const bob = REDUCED ? 0 : Math.sin(t*1.7)*.05;
+    root.position.y = bob + hopS.x*.35;
+    root.scale.set(1 - sqS.x*.25, 1 + sqS.x*.35, 1 - sqS.x*.25);
+
+    // head look at pointer
+    const r = stageEl.getBoundingClientRect();
+    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+    const nx = Math.max(-1, Math.min(1, (MS.pointer.x - cx) / (innerWidth*.5)));
+    const ny = Math.max(-1, Math.min(1, (MS.pointer.y - cy) / (innerHeight*.5)));
+    spring(yawS, REDUCED ? 0 : nx*.45, 40, 9, dt); spring(pitS, REDUCED ? 0 : ny*.22, 40, 9, dt);
+    head.rotation.y = yawS.x; head.rotation.x = pitS.x;
+    head.rotation.z = REDUCED ? 0 : Math.sin(t*1.1)*.04 - yawS.x*.08;
+    bodyG.rotation.y = yawS.x*.25;
+
+    // arm: wave when greeting, slow beckon otherwise
+    if (MS.wave > 0 && !REDUCED){
+      MS.wave -= dt;
+      armPivot.rotation.z = .42 + Math.sin(t*10)*.3; armPivot.rotation.x = 0;
+    } else {
+      armPivot.rotation.z += (.36 - armPivot.rotation.z) * .1;
+      armPivot.rotation.x = REDUCED ? 0 : -Math.max(0, Math.sin(t*2.4))*.55;
+    }
+
+    // blink / happy squint
+    blinkT -= dt;
+    if (blinkT <= 0){ blinking = .14; blinkT = 2.2 + Math.random()*3.5; }
+    let ey = 1;
+    if (blinking > 0){ blinking -= dt; ey = .12; }
+    if (MS.happy > 0){ MS.happy -= dt; ey = .25; }
+    eyes.forEach(e => e.scale.y = ey);
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  document.addEventListener('visibilitychange', ()=>{ running = !document.hidden; if (running){ last = performance.now(); requestAnimationFrame(frame); }});
+  requestAnimationFrame(frame);
+}
+try { boot(); } catch(e){ console.error(e); stageEl.classList.add('no3d'); }
+</script>
+<script>
+/* if three.js never loads (offline / blocked CDN / no WebGL), show the flat Mochi */
+setTimeout(()=>{ if (!window.__mochi3d) document.getElementById('mochi-stage').classList.add('no3d'); }, 5000);
+</script>
+</body>
+</html>
