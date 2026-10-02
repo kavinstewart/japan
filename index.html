@@ -173,11 +173,12 @@ section{scroll-margin-top:64px}
 .tank{position:relative;height:120px;border-top:3px solid #2C6A8E;border-bottom:3px solid #2C6A8E;background:linear-gradient(#0E4466,#0B3550);margin:0 0 var(--s7);overflow:hidden}
 .tank .fish{position:absolute;left:0;animation:swim linear infinite}
 .tank .fish svg{width:100%;height:auto}
-@keyframes swim{from{transform:translateX(-140px)}to{transform:translateX(calc(100vw + 40px))}}
+/* fish art faces left: flip the left-to-right swimmers so they swim head-first */
+@keyframes swim{from{transform:translateX(-140px) scaleX(-1)}to{transform:translateX(calc(100vw + 40px)) scaleX(-1)}}
 .tank .fish.rev{animation-name:swimrev}
-@keyframes swimrev{from{transform:translateX(calc(100vw + 40px)) scaleX(-1)}to{transform:translateX(-140px) scaleX(-1)}}
+@keyframes swimrev{from{transform:translateX(calc(100vw + 40px))}to{transform:translateX(-140px)}}
 .tank .boat{position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:220px}
-@media (prefers-reduced-motion:reduce){.tank .fish{animation:none}.tank .fish:nth-child(1){transform:translateX(8vw)}.tank .fish:nth-child(2){transform:translateX(70vw)}.tank .fish:nth-child(3){transform:translateX(40vw)}.tank .fish:nth-child(4){transform:translateX(85vw)}}
+@media (prefers-reduced-motion:reduce){.tank .fish{animation:none}.tank .fish:nth-of-type(1){transform:translateX(8vw) scaleX(-1)}.tank .fish:nth-of-type(2){transform:translateX(70vw)}.tank .fish:nth-of-type(3){transform:translateX(40vw) scaleX(-1)}.tank .fish:nth-of-type(4){transform:translateX(85vw)}}
 .z-grid{display:grid;gap:var(--s7)}
 @media (min-width:960px){.z-grid{grid-template-columns:1fr 1fr;gap:var(--s8)}}
 .hookline{list-style:none;margin:0;padding:0 0 0 46px;position:relative}
