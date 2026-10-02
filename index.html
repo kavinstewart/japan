@@ -239,6 +239,29 @@ section{scroll-margin-top:64px}
 .place p{margin:4px 0 0;font-size:.9rem;line-height:1.45;color:#3a3c5c}
 .place .mins{font-family:var(--display);font-size:.95rem;white-space:nowrap}
 .place .mins small{display:block;font-family:var(--body);font-size:.7rem;font-weight:700;color:var(--muted);text-align:right}
+.finder{border:2.5px solid var(--ink);border-radius:var(--r-card);background:#fff;padding:var(--s3) var(--s4);margin-bottom:var(--s4);display:grid;gap:var(--s2);box-shadow:var(--shadow-sm)}
+.finder-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s1) var(--s4);justify-content:space-between}
+.finder-top b{font-family:var(--display);font-weight:400;font-size:1.15rem}
+.finder-top span{font-size:.9rem;color:var(--muted);font-weight:700}
+.finder-btns{display:flex;gap:var(--s2);overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}
+.fbtn{flex:none;font:inherit;font-weight:700;font-size:.92rem;min-height:44px;padding:4px 12px;border-radius:var(--r-ctl);border:2px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;white-space:nowrap}
+.fbtn:hover{background:#FFF1D6}
+.fbtn[aria-pressed="true"]{background:var(--catch)}
+.fbtn.me{background:var(--ink);color:#fff}
+.map-frame.live::after{content:"";position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:2.5px dashed var(--ink);border-radius:50%;pointer-events:none;z-index:500}
+.map-frame.live .pin:not(.c-home){opacity:.35;filter:grayscale(.6)}
+.leaflet-popup-content b[lang="ja"]{font-family:var(--body);font-weight:900}
+.live-pin{width:26px;height:26px;border-radius:50%;background:var(--catch);border:2.5px solid var(--ink);display:grid;place-items:center;font:900 12px/1 var(--body);color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.you-pin{width:18px;height:18px;border-radius:50%;background:#2B6BFF;border:3px solid #fff;box-shadow:0 0 0 2px #2B6BFF}
+.live-head{position:sticky;top:0;z-index:1;background:var(--catch);border-bottom:2px solid var(--ink);padding:var(--s2) var(--s3) var(--s2) var(--s4);display:flex;justify-content:space-between;align-items:center;gap:var(--s2)}
+.live-head h3{font-size:1.05rem;position:static;background:none;border:0;padding:0}
+.live-item{display:flex;align-items:stretch}
+.live-item .place{flex:1;grid-template-columns:30px 1fr auto}
+.live-item .num{width:28px;height:28px;border-radius:50%;background:var(--catch);border:2px solid var(--ink);display:grid;place-items:center;font-weight:900;font-size:.8rem}
+.live-item .addr{display:block;font-size:.82rem;color:var(--muted);font-weight:500;line-height:1.35;margin-top:2px}
+.gm{display:flex;align-items:center;padding:0 var(--s4) 0 var(--s2);font-size:.85rem;font-weight:900;color:var(--accent);white-space:nowrap;min-width:44px}
+.live-msg{padding:var(--s5) var(--s4);color:var(--muted);font-weight:700}
+.live-note{font-size:.8rem;color:var(--muted);padding:var(--s3) var(--s4);border-top:1.5px solid #ece9e2;line-height:1.45}
 .legend-note{font-size:var(--t-cap);color:var(--muted);margin-top:var(--s3)}
 /* category colours: used for pins + list icons */
 .c-eat{background:#FFB59E}.c-sweet{background:#FFD3E0}.c-see{background:#BFD4FF}.c-kids{background:#FFE07A}.c-gem{background:#B9E6CC}.c-home{background:var(--accent)}
@@ -502,13 +525,17 @@ footer a{color:#fff}
     <div class="sec-head">
       <span class="tag">Within 15 minutes on foot</span>
       <h2>The neighborhood, mapped</h2>
-      <p>Mimaru Suites is on a quiet street between Senso-ji and the Sumida River. Everything inside the red ring is about a 15-minute walk away. Pick a walk or tap any place.</p>
+      <p>Mimaru Suites is on a quiet street between Senso-ji and the Sumida River. Everything inside the red ring is about a 15-minute walk away. Pick a walk or tap any place. On the trip, use "Find it nearby" to search live wherever you are.</p>
     </div>
     <div class="routes" id="routes" role="group" aria-label="Suggested walks"></div>
     <div class="chips" id="chips" role="group" aria-label="Filter places"></div>
+    <div class="finder" role="group" aria-labelledby="finder-title">
+      <div class="finder-top"><b id="finder-title">Find it nearby</b><span>Live search around the middle of the map. Drag it anywhere in Japan.</span></div>
+      <div class="finder-btns" id="finder-btns"></div>
+    </div>
     <div class="map-layout">
       <div>
-        <div class="map-frame"><div id="map" role="region" aria-label="Map of places near the hotel"></div></div>
+        <div class="map-frame" id="map-frame"><div id="map" role="region" aria-label="Map of places near the hotel"></div></div>
         <p class="route-info" id="route-info"></p>
         <p class="legend-note">Walk times are estimates at kid pace. The route lines are rough, so follow your phone for the turns.</p>
       </div>
@@ -703,7 +730,7 @@ footer a{color:#fff}
 <footer>
   <div class="wrap">
     <p><b>Tokyo Crew ’26.</b> Made for the crew, starring Mochi, an original lucky cat.</p>
-    <p>Facts checked in early Oct 2026. Hours and prices change, so check the official pages linked above before you go. Map tiles © <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a> and contributors; place coordinates from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> and Japan's GSI.</p>
+    <p>Facts checked in early Oct 2026. Hours and prices change, so check the official pages linked above before you go. Map tiles © <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a> and contributors; place coordinates from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> and Japan's GSI. Live search by <a href="https://docs.openpoiapi.com/attribution.html" target="_blank" rel="noopener">OpenPOI API</a> (Overture Maps Foundation; Tokyo food-facility lists, CC BY 4.0).</p>
   </div>
 </footer>
 
@@ -782,6 +809,21 @@ const ROUTES = [
   {id:'cats', name:'Lucky cat river walk', meta:'~50 min · hidden gems', stops:['sumidapark','matsuchiyama','imado','sakurabashi','sumidapark'], say:'River walk to my hometown shrine, then back over the X bridge. Bring coins for the omikuji!'},
   {id:'poke', name:'Pokémon run', meta:'~20 min one way', stops:['riverwalk','mizumachi','ushijima','skytree','pokemon'], say:'Over the glass footbridge, along Mizumachi, a quick cow pat, then up to the Pokémon Center!'},
   {id:'kappa', name:'Kappabashi & fake food', meta:'~1.5 hrs with stops', stops:['nitenmon','hanayashiki','hoppy','kappa','sampleya','kappabashi','chefhead','sometaro','kaminarimon'], say:'Rides, then fake food, then real food. Sometaro okonomiyaki to finish. Perfect day.'},
+];
+
+/* live "find it nearby" presets for the OpenPOI API (Japanese keywords; one request per term, merged) */
+const FINDERS = [
+  {id:'konbini', label:'Konbini', ico:'🏪', q:['ローソン','ファミリーマート'], drop:/銀行|ATM/i, note:'7-Eleven isn\'t in this dataset, but there\'s usually one around the corner.'},
+  {id:'ramen', label:'Ramen', ico:'🍜', q:['ラーメン','らーめん','らぁ麺','中華そば'], keep:/ラーメン|らーめん|らぁ麺|拉麺|中華そば|麺|一蘭|ramen/i},
+  {id:'sushi', label:'Sushi', ico:'🍣', q:['寿司','鮨','すし'], keep:/寿司|鮨|すし|sushi/i},
+  {id:'tempura', label:'Tempura', ico:'🍤', q:['天ぷら','天麩羅','天丼']},
+  {id:'noodles', label:'Udon & soba', ico:'🥢', q:['うどん','蕎麦','そば'], drop:/焼きそば|油そば|中華そば/},
+  {id:'coffee', label:'Coffee', ico:'☕', q:['カフェ','珈琲','コーヒー','スターバックス']},
+  {id:'mcd', label:'McDonald\'s', ico:'🍟', q:['マクドナルド']},
+  {id:'drug', label:'Drugstore', ico:'💊', q:['ドラッグ','薬局','マツモトキヨシ'], drop:/ほけん|保険/},
+  {id:'hundred', label:'100-yen shop', ico:'🛍️', q:['ダイソー','セリア','キャンドゥ']},
+  {id:'gacha', label:'Gacha', ico:'🎰', q:['ガシャポン','ガチャ','カプセルトイ']},
+  {id:'laundry', label:'Laundry', ico:'🧺', q:['コインランドリー']},
 ];
 
 const PHRASES = [
@@ -1074,8 +1116,11 @@ function initMap(){
     m.addTo(map); markers[p.id] = m;
   });
 
-  /* list */
-  const list = document.getElementById('places');
+  /* list: curated picks + live results share the side panel */
+  const panel = document.getElementById('places');
+  const list = document.createElement('div'); list.id = 'picks';
+  const live = document.createElement('div'); live.id = 'live-list'; live.hidden = true;
+  panel.append(list, live);
   Object.entries(CATS).forEach(([k,c])=>{
     const items = PLACES.filter(p=>p.c===k).sort((a,b)=>a.mins-b.mins);
     const h = document.createElement('h3'); h.dataset.cat = k; h.innerHTML = `<span aria-hidden="true">${c.ico}</span> ${c.label}`;
@@ -1151,6 +1196,104 @@ function initMap(){
     rWrap.appendChild(b);
   });
   window.selectRoute = selectRoute;
+
+  /* ---- live "find it nearby" (OpenPOI API: free, no key, CORS-enabled) ---- */
+  const FIND_R = 900;
+  const liveLayer = L.layerGroup().addTo(map);
+  const frame = document.getElementById('map-frame');
+  const fWrap = document.getElementById('finder-btns');
+  const dist = (a,b) => { const R=6371000,t=x=>x*Math.PI/180, dLa=t(b.lat-a.lat), dLo=t(b.lng-a.lng);
+    return 2*R*Math.asin(Math.sqrt(Math.sin(dLa/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dLo/2)**2)); };
+  const norm = s => (s||'').normalize('NFKC').replace(/\s+/g,'').replace(/株式会社|\(株\)|日本/g,'');
+  const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let lastFinder = null, youMarker = null, reqId = 0;
+
+  function showPicks(){
+    liveLayer.clearLayers(); live.hidden = true; list.hidden = false; frame.classList.remove('live');
+    fWrap.querySelectorAll('.fbtn[data-id]').forEach(b=>b.setAttribute('aria-pressed','false'));
+  }
+  async function runFinder(f){
+    lastFinder = f;
+    const id = ++reqId, c = map.getCenter(), center = {lat:c.lat, lng:c.lng};
+    fWrap.querySelectorAll('.fbtn[data-id]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.id===f.id));
+    list.hidden = true; live.hidden = false; frame.classList.add('live');
+    live.innerHTML = `<div class="live-head"><h3>${f.ico} ${f.label}</h3><button type="button" class="btn small" data-back>Mochi's picks</button></div><p class="live-msg" role="status">Looking around…</p>`;
+    live.querySelector('[data-back]').onclick = showPicks;
+    liveLayer.clearLayers();
+    L.circle([center.lat,center.lng], {radius:FIND_R, color:'#16173A', weight:2, dashArray:'4 6', fill:false, interactive:false}).addTo(liveLayer);
+    map.fitBounds(L.latLng(center.lat,center.lng).toBounds(FIND_R*2), {animate:!REDUCED});
+    try {
+      const sets = await Promise.all(f.q.map(q => fetch('https://api.openpoiapi.com/v1/search?' + new URLSearchParams({q, center:`${center.lng.toFixed(6)},${center.lat.toFixed(6)}`, radius:FIND_R, limit:40}))
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })));
+      if (id !== reqId) return;
+      let all = sets.flatMap(d => d.results || []);
+      if (f.keep) all = all.filter(p => f.keep.test(p.name));
+      if (f.drop) all = all.filter(p => !f.drop.test(p.name));
+      const out = [];
+      for (const p of all){
+        p.d = dist(center, p); const n = norm(p.name);
+        if (out.some(o => { const m = norm(o.name); return (m===n || m.includes(n) || n.includes(m)) && dist(o,p) < 80; })) continue;
+        out.push(p);
+      }
+      out.sort((a,b)=>a.d-b.d);
+      const top = out.slice(0, 15);
+      const note = `<p class="live-note">${f.note ? esc(f.note)+' ' : ''}Names are in Japanese. Tap Maps for photos, hours and reviews. Data: <a href="https://docs.openpoiapi.com/attribution.html" target="_blank" rel="noopener">OpenPOI API</a> · Overture Maps Foundation · Tokyo food-facility lists (CC BY 4.0).</p>`;
+      if (!top.length){
+        live.querySelector('.live-msg').textContent = 'Nothing within about 12 minutes of here. Drag the map and try again.';
+        live.insertAdjacentHTML('beforeend', note);
+        say(`Hmm, no ${f.label.toLowerCase()} right here. Drag the map somewhere else and ask me again!`);
+        return;
+      }
+      const ul = document.createElement('ul');
+      top.forEach((p,i) => {
+        const mins = Math.max(1, Math.round(p.d*1.3/72));
+        const gm = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(`${p.name} ${p.city||''}${p.address||''}`);
+        const mk = L.marker([p.lat,p.lng], {icon:L.divIcon({className:'', html:`<span class="live-pin">${i+1}</span>`, iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-12]}), title:p.name})
+          .bindPopup(`<b lang="ja">${esc(p.name)}</b><br><span lang="ja">${esc((p.city||'')+(p.address||''))}</span><br>~${mins} min walk · <a class="pop-link" href="${gm}" target="_blank" rel="noopener">Open in Google Maps</a>`)
+          .addTo(liveLayer);
+        const li = document.createElement('li'); li.className = 'live-item';
+        li.innerHTML = `<button type="button" class="place"><span class="num" aria-hidden="true">${i+1}</span><span><b lang="ja">${esc(p.name)}</b><span class="addr" lang="ja">${esc(p.address||p.city||'')}</span></span><span class="mins">${mins}′<small>walk</small></span></button><a class="gm" href="${gm}" target="_blank" rel="noopener" aria-label="Open ${esc(p.name)} in Google Maps">Maps</a>`;
+        li.querySelector('button').onclick = () => {
+          if (innerWidth < 1000) document.getElementById('map').scrollIntoView({behavior:REDUCED?'auto':'smooth', block:'center'});
+          map.flyTo([p.lat,p.lng], 18, {duration:REDUCED?0:.6}); setTimeout(()=>mk.openPopup(), REDUCED?0:650);
+        };
+        ul.appendChild(li);
+      });
+      live.querySelector('.live-msg').remove();
+      live.append(ul); live.insertAdjacentHTML('beforeend', note);
+      const near = Math.max(1, Math.round(top[0].d*1.3/72));
+      say(`I found ${top.length === 15 ? 'lots of' : top.length} ${f.label.toLowerCase()} spots! The closest is about ${near} minute${near>1?'s':''} away. Look for the yellow numbers.`);
+    } catch(e){
+      if (id !== reqId) return;
+      live.querySelector('.live-msg').textContent = 'Live search is unavailable right now. Try again in a moment.';
+      say("The live search isn't answering. Try again in a moment!");
+    }
+  }
+  FINDERS.forEach(f => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'fbtn'; b.dataset.id = f.id; b.setAttribute('aria-pressed','false');
+    b.innerHTML = `<span aria-hidden="true">${f.ico}</span> ${f.label}`;
+    b.addEventListener('click', () => runFinder(f));
+    fWrap.appendChild(b);
+  });
+  const me = document.createElement('button');
+  me.type = 'button'; me.className = 'fbtn me'; me.innerHTML = '<span aria-hidden="true">📍</span> Near me';
+  me.addEventListener('click', () => {
+    if (!navigator.geolocation){ say("Your browser won't share location. Drag the map instead!"); return; }
+    say('Finding you…');
+    navigator.geolocation.getCurrentPosition(pos => {
+      const ll = L.latLng(pos.coords.latitude, pos.coords.longitude);
+      const inJapan = ll.lat > 24 && ll.lat < 46 && ll.lng > 122 && ll.lng < 146;
+      if (!inJapan){ say("You're not in Japan yet! I'll search around the hotel for now."); map.setView([HOTEL.lat,HOTEL.lng], 16, {animate:false}); }
+      else {
+        map.setView(ll, 16, {animate:false});
+        if (youMarker) youMarker.remove();
+        youMarker = L.marker(ll, {icon:L.divIcon({className:'', html:'<span class="you-pin"></span>', iconSize:[18,18], iconAnchor:[9,9]}), title:'You are here', zIndexOffset:900}).addTo(map);
+      }
+      runFinder(lastFinder || FINDERS[0]);
+    }, () => say("I couldn't get your location. Drag the map to where you are instead!"), {enableHighAccuracy:true, timeout:10000, maximumAge:60000});
+  });
+  fWrap.prepend(me);
   document.getElementById('show-poke-route').addEventListener('click', ()=>{
     document.getElementById('walk').scrollIntoView({behavior:REDUCED?'auto':'smooth'});
     setTimeout(()=>selectRoute('poke'), REDUCED?0:700);
